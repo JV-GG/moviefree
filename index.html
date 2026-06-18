@@ -1446,8 +1446,8 @@
       <div style="background: var(--accent-gradient); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);">
         <i data-lucide="lock" style="color: white; width: 26px; height: 26px;"></i>
       </div>
-      <h2 style="font-weight: 850; font-size: 1.6rem; margin-bottom: 0.75rem; letter-spacing: -0.5px;">API Settings Lock</h2>
-      <p class="modal-desc" style="margin-bottom: 1.5rem;">Access to TMDB API Settings is restricted. Please enter the credentials password to view or modify API configurations.</p>
+      <h2 id="password-overlay-title" style="font-weight: 850; font-size: 1.6rem; margin-bottom: 0.75rem; letter-spacing: -0.5px;">API Settings Lock</h2>
+      <p id="password-overlay-desc" class="modal-desc" style="margin-bottom: 1.5rem;">Access to TMDB API Settings is restricted. Please enter the credentials password to view or modify API configurations.</p>
       
       <div class="modal-input-group" style="text-align: left;">
         <label for="site-password-input" class="modal-label">Credentials Password</label>
@@ -1937,6 +1937,8 @@
         genre: 'all',
         page: 1
       },
+      hkAuthorized: false,
+      _pendingPasswordCb: null,
       cachedDetails: {}
     };
 
@@ -1988,17 +1990,27 @@
         
         switchPage('watch-page', () => loadWatchPage());
       } else if (route === 'browse') {
-        state.browseFilters.type = params.get('type') || 'all';
+        const browseType = params.get('type') || 'all';
+        state.browseFilters.type = browseType;
         state.browseFilters.genre = params.get('genre') || 'all';
         state.browseFilters.year = params.get('year') || 'all';
         state.browseFilters.query = params.get('q') || '';
+        
+        // Gate HK Drama browse via URL
+        if (browseType === 'hongkong' && !state.hkAuthorized) {
+          requireHkAuth(() => {
+            syncBrowseUI();
+            switchPage('browse-page', () => loadBrowsePage());
+          });
+          return;
+        }
         
         // Update filter inputs UI to match route params
         syncBrowseUI();
         
         switchPage('browse-page', () => loadBrowsePage());
       } else if (route === 'hongkong') {
-        switchPage('hongkong-page', () => loadHongKongPage());
+        requireHkAuth(() => switchPage('hongkong-page', () => loadHongKongPage()));
       } else if (route === 'terms') {
         switchPage('terms-page');
       } else {
@@ -2143,6 +2155,14 @@
       document.getElementById('site-password-input').value = '';
       document.getElementById('password-error-message').style.display = 'none';
       localStorage.removeItem('JV_MOVIE_AUTHORIZED');
+      // If HK auth was pending and user cancelled, redirect home
+      if (state._pendingPasswordCb && !state.hkAuthorized) {
+        const wasHkGate = document.getElementById('password-overlay-title').textContent.includes('HK Drama');
+        if (wasHkGate) {
+          window.location.hash = '#home';
+        }
+      }
+      state._pendingPasswordCb = null;
     }
     
     function verifySitePassword() {
@@ -2156,13 +2176,13 @@
         // Hide password screen
         screen.classList.add('hidden');
         errorMsg.style.display = 'none';
-        
-        // Clear input value
         document.getElementById('site-password-input').value = '';
         
-        // Now open the api key modal
+        // Invoke the pending callback (API modal or HK Drama navigation)
+        const cb = state._pendingPasswordCb;
+        state._pendingPasswordCb = null;
         setTimeout(() => {
-          openApiKeyModal();
+          if (cb) cb();
         }, 300);
       } else {
         errorMsg.style.display = 'block';
@@ -2175,8 +2195,20 @@
       }
     }
 
+    // Generic: show password overlay with a title, description, and success callback
+    function showPasswordOverlay(title, desc, onSuccess) {
+      document.getElementById('password-overlay-title').textContent = title;
+      document.getElementById('password-overlay-desc').textContent = desc;
+      state._pendingPasswordCb = onSuccess;
+      const screen = document.getElementById('password-protection-screen');
+      screen.classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('site-password-input').focus();
+      }, 100);
+    }
+
     function openApiKeyModal() {
-      // Check if authorized
+      // Check if already authorized this session
       const isAuthorized = localStorage.getItem('JV_MOVIE_AUTHORIZED');
       if (isAuthorized === 'true') {
         const modal = document.getElementById('api-key-modal');
@@ -2184,13 +2216,28 @@
         input.value = state.apiKey || '';
         modal.classList.add('active');
       } else {
-        // Show password protection overlay
-        const screen = document.getElementById('password-protection-screen');
-        screen.classList.remove('hidden');
-        setTimeout(() => {
-          document.getElementById('site-password-input').focus();
-        }, 100);
+        showPasswordOverlay(
+          'API Settings Lock',
+          'Access to TMDB API Settings is restricted. Please enter the credentials password to view or modify API configurations.',
+          openApiKeyModal
+        );
       }
+    }
+
+    // Gate for HK Drama access — requires password once per session
+    function requireHkAuth(onGranted) {
+      if (state.hkAuthorized) {
+        onGranted();
+        return;
+      }
+      showPasswordOverlay(
+        '🔒 HK Drama Access',
+        'This section contains Hong Kong Drama content and is password-protected. Please enter your credentials to continue.',
+        () => {
+          state.hkAuthorized = true;
+          onGranted();
+        }
+      );
     }
 
     function closeApiKeyModal() {
@@ -2477,9 +2524,22 @@
       // Media type selection
       typePills.forEach(pill => {
         pill.addEventListener('click', () => {
+          const selectedType = pill.getAttribute('data-type');
+          
+          // Gate HK Drama pill behind password
+          if (selectedType === 'hongkong') {
+            requireHkAuth(() => {
+              typePills.forEach(p => p.classList.remove('active'));
+              pill.classList.add('active');
+              state.browseFilters.type = 'hongkong';
+              updateBrowseUrl();
+            });
+            return;
+          }
+
           typePills.forEach(p => p.classList.remove('active'));
           pill.classList.add('active');
-          state.browseFilters.type = pill.getAttribute('data-type');
+          state.browseFilters.type = selectedType;
           updateBrowseUrl();
         });
       });
