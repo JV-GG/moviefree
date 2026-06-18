@@ -557,6 +557,25 @@
       .card { flex: 0 0 calc(50% - 0.65rem); min-width: 140px; }
     }
 
+    /* HK Drama Badge Overlay tag */
+    .hk-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #fff;
+      padding: 0.25rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      z-index: 5;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
     /* Poster Frame */
     .card-poster {
       position: relative;
@@ -1463,6 +1482,7 @@
         <li><a href="#home" class="nav-link active">Home</a></li>
         <li><a href="#browse?type=movie" class="nav-link">Movies</a></li>
         <li><a href="#browse?type=tv" class="nav-link">TV Series</a></li>
+        <li><a href="#hongkong" class="nav-link">Hong Kong Drama</a></li>
         <li><a href="#browse" class="nav-link">Browse All</a></li>
       </ul>
       
@@ -1570,6 +1590,7 @@
                 <option value="27">Horror</option>
                 <option value="878">Sci-Fi / Fantasy</option>
                 <option value="korean">Korean Drama</option>
+                <option value="hongkong">Hong Kong Drama</option>
               </select>
               <i data-lucide="chevron-down"></i>
             </div>
@@ -1607,6 +1628,14 @@
               <span id="player-status-txt">Loading Embedded Video Player...</span>
             </div>
             <iframe id="video-player" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          </div>
+
+          <!-- Fallback Note (Shown for HK Dramas) -->
+          <div id="hk-player-fallback" style="display: none; justify-content: space-between; align-items: center; margin-top: -0.5rem; padding: 0.75rem 1.25rem; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: var(--border-radius-sm); font-size: 0.85rem;">
+            <span style="color: var(--text-muted);">Can't load? Try YouTube fallback player:</span>
+            <a id="hk-youtube-fallback-btn" href="" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 20px; text-decoration: none; color: #fff; gap: 0.25rem; border-color: rgba(239, 68, 68, 0.3);">
+              Watch on YouTube <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+            </a>
           </div>
 
           <!-- TV Series Episode Picker (Injected Dynamically) -->
@@ -1667,6 +1696,62 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
+    <!-- ==========================================
+         PAGE 4: HONG KONG DRAMA PAGE
+         ========================================== -->
+    <section id="hongkong-page" class="page" tabindex="-1">
+      <!-- Hero Banner -->
+      <div class="hero" id="hk-hero-banner">
+        <div class="hero-backdrop" id="hk-hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <span class="hero-badge"><i data-lucide="award"></i> Featured HK Drama</span>
+          <h1 class="hero-title" id="hk-hero-title">Loading...</h1>
+          <div class="hero-meta">
+            <span class="rating-badge"><i data-lucide="star" style="fill: #ffc107;"></i> <span id="hk-hero-rating">8.5</span></span>
+            <span id="hk-hero-year">2026</span>
+            <span id="hk-hero-type">TV Series</span>
+          </div>
+          <p class="hk-hero-desc hero-desc" id="hk-hero-desc">Discover premium Hong Kong TVB dramas. Stream classic and latest Cantonese series instantly.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn btn-primary" id="hk-hero-play-btn"><i data-lucide="play"></i> Watch Now</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Genre Tabs & Browse Grid -->
+      <div class="browse-container" style="padding-top: 3rem;">
+        <div class="row-header" style="margin-bottom: 2rem; flex-direction: column; align-items: flex-start; gap: 1.5rem;">
+          <h2 class="row-title">🇭🇰 Hong Kong Dramas</h2>
+          
+          <!-- Sub-category Tabs -->
+          <div class="filter-controls" style="width: 100%;">
+            <div class="filter-pills" id="hk-genre-tabs" style="overflow-x: auto; width: 100%; padding-bottom: 0.5rem; scrollbar-width: none;">
+              <button class="filter-pill active" data-genre="all">All</button>
+              <button class="filter-pill" data-genre="28">Action</button>
+              <button class="filter-pill" data-genre="10749">Romance</button>
+              <button class="filter-pill" data-genre="35">Comedy</button>
+              <button class="filter-pill" data-genre="80">Crime</button>
+              <button class="filter-pill" data-genre="36">History</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid -->
+        <div id="hk-drama-grid" class="browse-grid">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Load More Container -->
+        <div style="display: flex; justify-content: center; margin-top: 3rem; margin-bottom: 4rem;">
+          <button id="hk-load-more-btn" class="btn btn-secondary" style="padding: 0.85rem 2.5rem; font-weight: 700; gap: 0.5rem; display: none;">
+            <i data-lucide="loader-2" class="animate-spin" style="display: none; width: 18px; height: 18px;"></i>
+            <span>Load More</span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -1829,7 +1914,7 @@
       searchResults: [],
       browseFilters: {
         type: 'all', // all, movie, tv
-        genre: 'all', // all, genre_id, korean
+        genre: 'all', // all, genre_id, korean, hongkong
         query: ''
       },
       watchData: {
@@ -1837,6 +1922,10 @@
         type: null,
         season: 1,
         episode: 1
+      },
+      hkPage: {
+        genre: 'all',
+        page: 1
       },
       cachedDetails: {}
     };
@@ -1897,6 +1986,8 @@
         syncBrowseUI();
         
         switchPage('browse-page', () => loadBrowsePage());
+      } else if (route === 'hongkong') {
+        switchPage('hongkong-page', () => loadHongKongPage());
       } else if (route === 'terms') {
         switchPage('terms-page');
       } else {
@@ -1937,6 +2028,8 @@
               } else if (pageId === 'browse-page' && !state.browseFilters.type) {
                 link.classList.add('active');
               } else if (pageId === 'home-page' && linkBase === '#home') {
+                link.classList.add('active');
+              } else if (linkBase === pageBase) {
                 link.classList.add('active');
               } else {
                 link.classList.remove('active');
@@ -2194,13 +2287,14 @@
         }
         
         // 2. Fetch all required layout categories concurrently
-        const [popularMovies, popularTV, topRatedMovies, topRatedTV, actionMovies, koreanDrama] = await Promise.all([
+        const [popularMovies, popularTV, topRatedMovies, topRatedTV, actionMovies, koreanDrama, hkDrama] = await Promise.all([
           fetchTMDB('/movie/popular').catch(() => null),
           fetchTMDB('/tv/popular').catch(() => null),
           fetchTMDB('/movie/top_rated').catch(() => null),
           fetchTMDB('/tv/top_rated').catch(() => null),
           fetchTMDB('/discover/movie', { with_genres: 28 }).catch(() => null),
-          fetchTMDB('/discover/tv', { with_origin_country: 'KR' }).catch(() => null)
+          fetchTMDB('/discover/tv', { with_origin_country: 'KR' }).catch(() => null),
+          fetchTMDB('/discover/tv', { with_origin_country: 'HK', with_original_language: 'zh', sort_by: 'popularity.desc' }).catch(() => null)
         ]);
 
         const container = document.getElementById('home-rows-container');
@@ -2214,6 +2308,7 @@
         if (topRatedTV) injectCategoryRow(container, 'Top Rated TV Series', topRatedTV.results);
         if (actionMovies) injectCategoryRow(container, 'Action Movies', actionMovies.results);
         if (koreanDrama) injectCategoryRow(container, 'Korean Drama', koreanDrama.results);
+        if (hkDrama) injectCategoryRow(container, '🇭🇰 Hong Kong Dramas', hkDrama.results);
         
         lucide.createIcons();
       } catch (err) {
@@ -2296,11 +2391,13 @@
       const year = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
       const rating = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
       const type = isTV ? 'tv' : 'movie';
+      const isHK = item.origin_country && (Array.isArray(item.origin_country) ? item.origin_country.includes('HK') : item.origin_country === 'HK');
       
       // Dynamic element view transition configuration
       return `
         <a href="#watch?id=${item.id}&type=${type}" class="card" data-id="${item.id}" data-type="${type}">
           <div class="card-poster">
+            ${isHK ? '<div class="hk-badge">🇭🇰 HK Drama</div>' : ''}
             <img src="${getPosterUrl(item.poster_path)}" alt="${title}" loading="lazy">
             <div class="card-overlay">
               <div class="card-overlay-btn"><i data-lucide="play" style="fill: white;"></i></div>
@@ -2418,9 +2515,14 @@
         
         // Fetch logic based on Search Query vs Discover Browse
         if (query) {
-          // TMDB MultiSearch
-          const searchData = await fetchTMDB('/search/multi', { query });
-          items = searchData.results || [];
+          if (genre === 'hongkong') {
+            const searchData = await fetchTMDB('/search/tv', { query, language: 'zh-HK' });
+            items = (searchData.results || []).map(i => ({ ...i, media_type: 'tv' }));
+          } else {
+            // TMDB MultiSearch
+            const searchData = await fetchTMDB('/search/multi', { query });
+            items = searchData.results || [];
+          }
           
           // Apply client-side filters on search results
           items = items.filter(item => {
@@ -2433,6 +2535,8 @@
             if (genre !== 'all') {
               if (genre === 'korean') {
                 return item.origin_country && item.origin_country.includes('KR');
+              } else if (genre === 'hongkong') {
+                return item.origin_country && item.origin_country.includes('HK');
               } else {
                 const genreId = parseInt(genre);
                 return item.genre_ids && item.genre_ids.includes(genreId);
@@ -2459,6 +2563,28 @@
               const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
               const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
               // Interleave results
+              items = [];
+              for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
+                if (movies[i]) items.push(movies[i]);
+                if (tvs[i]) items.push(tvs[i]);
+              }
+            }
+          } else if (genre === 'hongkong') {
+            // Fetch Hong Kong Dramas / Movies
+            if (type === 'movie') {
+              const res = await fetchTMDB('/discover/movie', { with_origin_country: 'HK', with_original_language: 'zh' });
+              items = res.results.map(i => ({ ...i, media_type: 'movie' }));
+            } else if (type === 'tv') {
+              const res = await fetchTMDB('/discover/tv', { with_origin_country: 'HK', with_original_language: 'zh' });
+              items = res.results.map(i => ({ ...i, media_type: 'tv' }));
+            } else {
+              // combine both
+              const [movRes, tvRes] = await Promise.all([
+                fetchTMDB('/discover/movie', { with_origin_country: 'HK', with_original_language: 'zh' }),
+                fetchTMDB('/discover/tv', { with_origin_country: 'HK', with_original_language: 'zh' })
+              ]);
+              const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
+              const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
               items = [];
               for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
                 if (movies[i]) items.push(movies[i]);
@@ -2569,11 +2695,24 @@
         const genresBox = document.getElementById('watch-genres');
         genresBox.innerHTML = details.genres.map(g => `<span class="genre-tag">${g.name}</span>`).join('');
         
+        // HK Drama Overrides and Fallbacks
+        const isHK = details.origin_country && (Array.isArray(details.origin_country) ? details.origin_country.includes('HK') : details.origin_country === 'HK');
+        const fallbackBox = document.getElementById('hk-player-fallback');
+        if (isHK) {
+          fallbackBox.style.display = 'flex';
+          const dramaTitle = encodeURIComponent(title);
+          const youtubeUrl = `https://www.youtube.com/results?search_query=${dramaTitle}+full+episode+cantonese`;
+          document.getElementById('hk-youtube-fallback-btn').href = youtubeUrl;
+        } else {
+          fallbackBox.style.display = 'none';
+        }
+
         // 2Embed video loader logic
         let embedUrl = '';
         if (isTV) {
-          embedUrl = `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
-          document.getElementById('player-status-txt').textContent = `Loading Season ${season} Episode ${episode}...`;
+          const embedSeason = isHK ? 1 : season;
+          embedUrl = `https://www.2embed.cc/embedtv/${id}&s=${embedSeason}&e=${episode}`;
+          document.getElementById('player-status-txt').textContent = `Loading Season ${embedSeason} Episode ${episode}...`;
           
           // Render TV episode selectors UI
           setupTvSelectors(details, season, episode);
@@ -2604,44 +2743,64 @@
       
       container.style.display = 'block';
       
-      // Populate Seasons dropdown
-      seasonSelect.innerHTML = details.seasons
-        .filter(s => s.season_number > 0) // exclude specials/season 0
-        .map(s => `<option value="${s.season_number}" ${s.season_number === activeSeason ? 'selected' : ''}>Season ${s.season_number}</option>`)
-        .join('');
+      const isHK = details.origin_country && (Array.isArray(details.origin_country) ? details.origin_country.includes('HK') : details.origin_country === 'HK');
+      const seasonWrapper = document.querySelector('.season-selector-wrapper');
+
+      if (isHK) {
+        if (seasonWrapper) seasonWrapper.style.display = 'none';
         
-      // Fetch details of active season to know how many episodes exist
-      try {
-        const seasonDetails = await fetchTMDB(`/tv/${details.id}/season/${activeSeason}`);
-        const episodeCount = seasonDetails.episodes ? seasonDetails.episodes.length : 0;
-        
+        // Populate episodes from total episodes (forced season 1)
+        const episodeCount = details.number_of_episodes || 1;
         episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
           const epNum = idx + 1;
           const isActive = epNum === activeEpisode;
-          return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, ${activeSeason}, ${epNum})">${epNum}</button>`;
+          return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, 1, ${epNum})">${epNum}</button>`;
         }).join('');
-      } catch (err) {
-        // Fallback: use generic counts from season index list
-        const activeSeasonObj = details.seasons.find(s => s.season_number === activeSeason);
-        const episodeCount = activeSeasonObj ? activeSeasonObj.episode_count : 10;
+      } else {
+        if (seasonWrapper) seasonWrapper.style.display = 'flex';
         
-        episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
-          const epNum = idx + 1;
-          const isActive = epNum === activeEpisode;
-          return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, ${activeSeason}, ${epNum})">${epNum}</button>`;
-        }).join('');
+        // Populate Seasons dropdown
+        seasonSelect.innerHTML = details.seasons
+          .filter(s => s.season_number > 0) // exclude specials/season 0
+          .map(s => `<option value="${s.season_number}" ${s.season_number === activeSeason ? 'selected' : ''}>Season ${s.season_number}</option>`)
+          .join('');
+          
+        // Fetch details of active season to know how many episodes exist
+        try {
+          const seasonDetails = await fetchTMDB(`/tv/${details.id}/season/${activeSeason}`);
+          const episodeCount = seasonDetails.episodes ? seasonDetails.episodes.length : 0;
+          
+          episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
+            const epNum = idx + 1;
+            const isActive = epNum === activeEpisode;
+            return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, ${activeSeason}, ${epNum})">${epNum}</button>`;
+          }).join('');
+        } catch (err) {
+          // Fallback: use generic counts from season index list
+          const activeSeasonObj = details.seasons.find(s => s.season_number === activeSeason);
+          const episodeCount = activeSeasonObj ? activeSeasonObj.episode_count : 10;
+          
+          episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
+            const epNum = idx + 1;
+            const isActive = epNum === activeEpisode;
+            return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, ${activeSeason}, ${epNum})">${epNum}</button>`;
+          }).join('');
+        }
+        
+        // Season change event listener
+        seasonSelect.onchange = (e) => {
+          const selectedSeason = parseInt(e.target.value);
+          changeTvEpisode(details.id, selectedSeason, 1);
+        };
       }
-      
-      // Season change event listener
-      seasonSelect.onchange = (e) => {
-        const selectedSeason = parseInt(e.target.value);
-        changeTvEpisode(details.id, selectedSeason, 1);
-      };
     }
 
     function changeTvEpisode(tvId, season, episode) {
+      const details = state.cachedDetails[`tv_${tvId}`];
+      const isHK = details && details.origin_country && (Array.isArray(details.origin_country) ? details.origin_country.includes('HK') : details.origin_country === 'HK');
+      const targetSeason = isHK ? 1 : season;
       // Navigate to watch route with updated parameters
-      window.location.hash = `#watch?id=${tvId}&type=tv&s=${season}&e=${episode}`;
+      window.location.hash = `#watch?id=${tvId}&type=tv&s=${targetSeason}&e=${episode}`;
     }
 
     async function loadRelatedContent(id, type) {
@@ -2683,6 +2842,147 @@
       } catch (err) {
         container.innerHTML = `<p style="font-size: 0.85rem; color: var(--text-dark);">Unable to fetch suggestions.</p>`;
       }
+    }
+
+    // ==========================================
+    // 7. HONG KONG DRAMA PAGE CONTROLLER
+    // ==========================================
+    
+    async function loadHongKongPage(resetGrid = true) {
+      if (!state.apiKey) return;
+
+      const grid = document.getElementById('hk-drama-grid');
+      const loadMoreBtn = document.getElementById('hk-load-more-btn');
+      
+      if (resetGrid) {
+        state.hkPage.page = 1;
+        grid.innerHTML = Array(12).fill(0).map(() => `
+          <div class="card skeleton-card">
+            <div class="skeleton skeleton-poster"></div>
+            <div class="skeleton skeleton-text-md"></div>
+            <div class="skeleton skeleton-text-sm"></div>
+          </div>
+        `).join('');
+        loadMoreBtn.style.display = 'none';
+      }
+
+      try {
+        dismissError();
+        const genreId = state.hkPage.genre;
+        const pageNum = state.hkPage.page;
+        
+        // Setup query params
+        const params = {
+          with_origin_country: 'HK',
+          with_original_language: 'zh',
+          sort_by: 'popularity.desc',
+          page: pageNum
+        };
+        
+        if (genreId !== 'all') {
+          params.with_genres = genreId;
+        }
+
+        const data = await fetchTMDB('/discover/tv', params);
+        const results = data.results || [];
+
+        // Setup Hero Banner on the first load of page 1
+        if (pageNum === 1 && results.length > 0) {
+          setupHkHero(results[0]);
+        }
+
+        if (resetGrid) {
+          grid.innerHTML = '';
+        }
+
+        if (results.length === 0 && pageNum === 1) {
+          grid.innerHTML = `
+            <div class="no-results">
+              <i data-lucide="film"></i>
+              <h3>No Dramas Found</h3>
+              <p>Could not find any Hong Kong dramas for this sub-category.</p>
+            </div>
+          `;
+          loadMoreBtn.style.display = 'none';
+        } else {
+          // Render results
+          const cardsHtml = results.map(item => {
+            return renderMovieCard({ ...item, media_type: 'tv' });
+          }).join('');
+          
+          if (resetGrid) {
+            grid.innerHTML = cardsHtml;
+          } else {
+            grid.insertAdjacentHTML('beforeend', cardsHtml);
+          }
+
+          // Show/hide pagination load more button
+          if (data.page < data.total_pages) {
+            loadMoreBtn.style.display = 'inline-flex';
+            // Setup listener
+            loadMoreBtn.onclick = () => {
+              state.hkPage.page++;
+              loadHongKongPage(false);
+            };
+          } else {
+            loadMoreBtn.style.display = 'none';
+          }
+        }
+
+        // Setup tabs listeners
+        setupHkTabsListeners();
+        lucide.createIcons();
+      } catch (err) {
+        showError('Could not populate Hong Kong Drama page. Check API configurations.');
+      }
+    }
+
+    function setupHkHero(item) {
+      const bg = document.getElementById('hk-hero-bg');
+      const title = document.getElementById('hk-hero-title');
+      const rating = document.getElementById('hk-hero-rating');
+      const year = document.getElementById('hk-hero-year');
+      const desc = document.getElementById('hk-hero-desc');
+      const playBtn = document.getElementById('hk-hero-play-btn');
+      
+      const titleText = item.name;
+      const releaseDate = item.first_air_date;
+      const yearText = releaseDate ? new Date(releaseDate).getFullYear() : '2026';
+      
+      bg.style.backgroundImage = `url('${getBackdropUrl(item.backdrop_path)}')`;
+      title.textContent = titleText;
+      rating.textContent = item.vote_average ? item.vote_average.toFixed(1) : '8.0';
+      year.textContent = yearText;
+      desc.textContent = item.overview || 'Stream premium Hong Kong dramas online.';
+      
+      playBtn.href = `#watch?id=${item.id}&type=tv`;
+    }
+
+    function setupHkTabsListeners() {
+      const tabs = document.querySelectorAll('#hk-genre-tabs .filter-pill');
+      tabs.forEach(tab => {
+        // Remove old click listener to avoid duplicate trigger
+        tab.replaceWith(tab.cloneNode(true));
+      });
+
+      // Re-fetch clean list of tab buttons
+      const newTabs = document.querySelectorAll('#hk-genre-tabs .filter-pill');
+      newTabs.forEach(tab => {
+        const genreVal = tab.getAttribute('data-genre');
+        // Set active class visually based on state.hkPage.genre
+        if (genreVal === state.hkPage.genre) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+
+        tab.addEventListener('click', () => {
+          newTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          state.hkPage.genre = genreVal;
+          loadHongKongPage(true);
+        });
+      });
     }
   </script>
 </body>
