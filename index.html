@@ -1433,6 +1433,129 @@
       font-size: 2.5rem;
       color: var(--text-dark);
     }
+
+    /* Dropdown Menus */
+    .has-dropdown {
+      position: relative;
+    }
+
+    .dropdown-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(11, 10, 26, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--border-radius-md);
+      padding: 1.25rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      z-index: 1100;
+    }
+
+    .has-dropdown:hover .dropdown-menu,
+    .has-dropdown.active .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Mega dropdown for Country Grid */
+    .dropdown-mega {
+      width: 580px;
+      max-width: calc(100vw - 2rem);
+    }
+
+    .country-grid-menu {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+
+    .country-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--border-radius-sm);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .country-menu-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
+    /* Genre Dropdown Grid */
+    .dropdown-genre {
+      width: 320px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+
+    .genre-menu-item {
+      display: flex;
+      align-items: center;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--border-radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .genre-menu-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+    }
+
+    /* Search Filter Grid Layout */
+    .search-filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .dropdown-mega {
+        width: 300px;
+      }
+      .country-grid-menu {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .dropdown-genre {
+        width: 280px;
+        grid-template-columns: 1fr;
+      }
+      .search-filter-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .search-filter-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1475,15 +1598,62 @@
     <div class="container navbar">
       <a href="#home" class="logo-container">
         <i data-lucide="clapperboard" style="color: #22c55e; fill: rgba(99, 102, 241, 0.2);"></i>
-        JV <span>Movie</span>
+        JV<span>Movie</span>
       </a>
       
       <ul class="nav-menu">
-        <li><a href="#home" class="nav-link active">Home</a></li>
         <li><a href="#browse?type=movie" class="nav-link">Movies</a></li>
         <li><a href="#browse?type=tv" class="nav-link">TV Series</a></li>
-        <li><a href="#hongkong" class="nav-link">Hong Kong Drama</a></li>
-        <li><a href="#browse" class="nav-link">Browse All</a></li>
+        <li class="has-dropdown">
+          <a href="#" class="nav-link dropdown-toggle" onclick="return false;">By Country <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i></a>
+          <div class="dropdown-menu dropdown-mega">
+            <div class="country-grid-menu">
+              <a href="#country?code=MY" class="country-menu-item">🇲🇾 Malaysia</a>
+              <a href="#country?code=KR" class="country-menu-item">🇰🇷 Korea</a>
+              <a href="#country?code=JP" class="country-menu-item">🇯🇵 Japan</a>
+              <a href="#country?code=CN" class="country-menu-item">🇨🇳 China</a>
+              <a href="#country?code=TW" class="country-menu-item">🇹🇼 Taiwan</a>
+              <a href="#country?code=TH" class="country-menu-item">🇹🇭 Thailand</a>
+              <a href="#country?code=PH" class="country-menu-item">🇵🇭 Philippines</a>
+              <a href="#country?code=ID" class="country-menu-item">🇮🇩 Indonesia</a>
+              <a href="#country?code=IN" class="country-menu-item">🇮🇳 India</a>
+              <a href="#country?code=US" class="country-menu-item">🇺🇸 USA</a>
+              <a href="#country?code=GB" class="country-menu-item">🇬🇧 UK</a>
+              <a href="#country?code=FR" class="country-menu-item">🇫🇷 France</a>
+              <a href="#country?code=DE" class="country-menu-item">🇩🇪 Germany</a>
+              <a href="#country?code=ES" class="country-menu-item">🇪🇸 Spain</a>
+              <a href="#country?code=IT" class="country-menu-item">🇮🇹 Italy</a>
+              <a href="#country?code=TR" class="country-menu-item">🇹🇷 Turkey</a>
+              <a href="#country?code=SA" class="country-menu-item">🇸🇦 Arab</a>
+              <a href="#country?code=BR" class="country-menu-item">🇧🇷 Brazil</a>
+              <a href="#country?code=MX" class="country-menu-item">🇲🇽 Mexico</a>
+              <a href="#country?code=AU" class="country-menu-item">🇦🇺 Australia</a>
+              <a href="#country?code=CA" class="country-menu-item">🇨🇦 Canada</a>
+              <a href="#country?code=RU" class="country-menu-item">🇷🇺 Russia</a>
+              <a href="#country?code=NL" class="country-menu-item">🇳🇱 Netherlands</a>
+            </div>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="#" class="nav-link dropdown-toggle" onclick="return false;">By Genre <i data-lucide="chevron-down" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i></a>
+          <div class="dropdown-menu dropdown-genre">
+            <a href="#browse?genre=28" class="genre-menu-item">Action</a>
+            <a href="#browse?genre=10749" class="genre-menu-item">Romance</a>
+            <a href="#browse?genre=35" class="genre-menu-item">Comedy</a>
+            <a href="#browse?genre=18" class="genre-menu-item">Drama</a>
+            <a href="#browse?genre=53" class="genre-menu-item">Thriller</a>
+            <a href="#browse?genre=27" class="genre-menu-item">Horror</a>
+            <a href="#browse?genre=878" class="genre-menu-item">Sci-Fi</a>
+            <a href="#browse?genre=16" class="genre-menu-item">Animation</a>
+            <a href="#browse?genre=10751" class="genre-menu-item">Family</a>
+            <a href="#browse?genre=99" class="genre-menu-item">Documentary</a>
+            <a href="#browse?genre=36" class="genre-menu-item">History</a>
+            <a href="#browse?genre=80" class="genre-menu-item">Crime</a>
+            <a href="#browse?genre=14" class="genre-menu-item">Fantasy</a>
+            <a href="#browse?genre=9648" class="genre-menu-item">Mystery</a>
+          </div>
+        </li>
+        <li><a href="#browse" class="nav-link">Search</a></li>
       </ul>
       
       <div class="nav-actions">
@@ -1572,36 +1742,44 @@
             <input type="text" id="search-input" class="search-input" placeholder="Search for movies, TV series, actors...">
             <i data-lucide="search"></i>
           </div>
-          
-          <div class="filter-controls">
-            <div class="filter-pills" id="type-filter-pills">
-              <button class="filter-pill active" data-type="all">All</button>
-              <button class="filter-pill" data-type="movie">Movies</button>
-              <button class="filter-pill" data-type="tv">TV Series</button>
-              <button class="filter-pill" data-type="hongkong">HK Drama</button>
-              <button class="filter-pill" data-type="korean">K-Drama</button>
+          <div class="filter-controls" style="display: flex; flex-direction: column; gap: 1rem; align-items: stretch;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+              <div class="filter-pills" id="type-filter-pills">
+                <button class="filter-pill active" data-type="all">All</button>
+                <button class="filter-pill" data-type="movie">Movies</button>
+                <button class="filter-pill" data-type="tv">TV Series</button>
+                <button class="filter-pill" data-type="korean">K-Drama</button>
+              </div>
             </div>
             
-            <div class="select-dropdown-wrapper">
-              <select id="genre-select" class="select-dropdown">
-                <option value="all">All Genres</option>
-                <option value="28">Action</option>
-                <option value="10749">Romance</option>
-                <option value="18">Drama</option>
-                <option value="35">Comedy</option>
-                <option value="27">Horror</option>
-                <option value="878">Sci-Fi / Fantasy</option>
-                <option value="korean">Korean Drama</option>
-                <option value="hongkong">Hong Kong Drama</option>
-              </select>
-              <i data-lucide="chevron-down"></i>
-            </div>
+            <div class="search-filter-grid">
+              <div class="select-dropdown-wrapper">
+                <select id="country-select" class="select-dropdown" style="width: 100%;">
+                  <!-- Populated dynamically -->
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
+              
+              <div class="select-dropdown-wrapper">
+                <select id="genre-select" class="select-dropdown" style="width: 100%;">
+                  <!-- Populated dynamically -->
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
 
-            <div class="select-dropdown-wrapper">
-              <select id="year-select" class="select-dropdown">
-                <option value="all">All Years</option>
-              </select>
-              <i data-lucide="chevron-down"></i>
+              <div class="select-dropdown-wrapper">
+                <select id="year-select" class="select-dropdown" style="width: 100%;">
+                  <!-- Populated dynamically -->
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
+
+              <div class="select-dropdown-wrapper">
+                <select id="language-select" class="select-dropdown" style="width: 100%;">
+                  <!-- Populated dynamically -->
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
             </div>
           </div>
         </div>
@@ -1639,27 +1817,45 @@
             <iframe id="video-player" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
           </div>
 
-          <!-- Fallback Note (Shown for HK Dramas) -->
-          <div id="hk-player-fallback" style="display: none; justify-content: space-between; align-items: center; margin-top: -0.5rem; padding: 0.75rem 1.25rem; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: var(--border-radius-sm); font-size: 0.85rem;">
-            <span style="color: var(--text-muted);">Can't load? Try YouTube fallback player:</span>
-            <a id="hk-youtube-fallback-btn" href="" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 20px; text-decoration: none; color: #fff; gap: 0.25rem; border-color: rgba(239, 68, 68, 0.3);">
-              Watch on YouTube <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+          <!-- Smart Fallback Buttons Row -->
+          <div class="fallback-buttons-row" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; margin-bottom: 0.5rem;">
+            <button id="btn-mirror-player" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem;">
+              <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Try Mirror Player
+            </button>
+            <a id="btn-watch-youtube" href="" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; text-decoration: none; color: #fff;">
+              <i data-lucide="play" style="width: 14px; height: 14px;"></i> Watch on YouTube
+            </a>
+            <a id="btn-search-online" href="" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; text-decoration: none; color: #fff;">
+              <i data-lucide="globe" style="width: 14px; height: 14px;"></i> Search Online
             </a>
           </div>
 
+
+
           <!-- TV Series Episode Picker (Injected Dynamically) -->
           <div id="tv-episode-selector" class="episode-selection-box" style="display: none;">
-            <div class="episode-select-header">
-              <h3 class="sidebar-heading" style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <div class="episode-select-header" style="flex-wrap: wrap; gap: 1rem;">
+              <h3 class="sidebar-heading" style="font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; margin-right: auto;">
                 <i data-lucide="list-video" style="color: var(--accent);"></i> Select Episode
               </h3>
-              <div class="season-selector-wrapper">
-                <span class="modal-label" style="margin-bottom: 0; display: inline-block;">Season:</span>
-                <div class="select-dropdown-wrapper">
-                  <select id="season-select" class="select-dropdown" style="padding: 0.4rem 2rem 0.4rem 1rem;">
-                    <!-- Seasons list -->
-                  </select>
-                  <i data-lucide="chevron-down"></i>
+              <div class="season-selector-wrapper" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="modal-label" style="margin-bottom: 0; display: inline-block;">Season:</span>
+                  <div class="select-dropdown-wrapper">
+                    <select id="season-select" class="select-dropdown" style="padding: 0.4rem 2rem 0.4rem 1rem;">
+                      <!-- Seasons list -->
+                    </select>
+                    <i data-lucide="chevron-down"></i>
+                  </div>
+                </div>
+                <div id="episode-select-wrapper" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="modal-label" style="margin-bottom: 0; display: inline-block;">Episode:</span>
+                  <div class="select-dropdown-wrapper">
+                    <select id="episode-select" class="select-dropdown" style="padding: 0.4rem 2rem 0.4rem 1rem;">
+                      <!-- Episodes list -->
+                    </select>
+                    <i data-lucide="chevron-down"></i>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1678,6 +1874,7 @@
                   <span id="watch-year">2026</span>
                   <span id="watch-duration">120 min</span>
                   <span id="watch-type-badge" class="genre-tag" style="background-color: var(--accent); color: white; border: none; font-size: 0.75rem;">MOVIE</span>
+                  <span id="watch-country-badge" style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; font-weight: 700; color: #fff;"></span>
                 </div>
               </div>
             </div>
@@ -1708,55 +1905,69 @@
       </div>
     </section>
 
+
     <!-- ==========================================
-         PAGE 4: HONG KONG DRAMA PAGE
+         PAGE 5: COUNTRY PAGE
          ========================================== -->
-    <section id="hongkong-page" class="page" tabindex="-1">
-      <!-- Hero Banner -->
-      <div class="hero" id="hk-hero-banner">
-        <div class="hero-backdrop" id="hk-hero-bg"></div>
+    <section id="country-page" class="page" tabindex="-1">
+      <!-- Country Hero Banner -->
+      <div class="hero" id="country-hero-banner" style="margin-bottom: 2rem;">
+        <div class="hero-backdrop" id="country-hero-bg" style="background-image: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(34, 197, 94, 0.2) 100%);"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-          <span class="hero-badge"><i data-lucide="award"></i> Featured HK Drama</span>
-          <h1 class="hero-title" id="hk-hero-title">Loading...</h1>
-          <div class="hero-meta">
-            <span class="rating-badge"><i data-lucide="star" style="fill: #ffc107;"></i> <span id="hk-hero-rating">8.5</span></span>
-            <span id="hk-hero-year">2026</span>
-            <span id="hk-hero-type">TV Series</span>
-          </div>
-          <p class="hk-hero-desc hero-desc" id="hk-hero-desc">Discover premium Hong Kong TVB dramas. Stream classic and latest Cantonese series instantly.</p>
-          <div class="hero-actions">
-            <a href="#" class="btn btn-primary" id="hk-hero-play-btn"><i data-lucide="play"></i> Watch Now</a>
-          </div>
+          <h1 class="hero-title" id="country-hero-title" style="font-size: clamp(2.2rem, 6vw, 4rem); display: flex; align-items: center; gap: 1rem; font-family: var(--font-display); font-weight: 400;">
+            <span id="country-hero-flag">🇲🇾</span> <span id="country-hero-name">Malaysia</span>
+          </h1>
+          <p class="hero-desc" id="country-hero-desc" style="color: var(--text-muted); font-size: 0.98rem; line-height: 1.7;">Explore movies and dramas from Malaysia. Browse popular titles and TV series from this region.</p>
         </div>
       </div>
 
-      <!-- Genre Tabs & Browse Grid -->
-      <div class="browse-container" style="padding-top: 3rem;">
-        <div class="row-header" style="margin-bottom: 2rem; flex-direction: column; align-items: flex-start; gap: 1.5rem;">
-          <h2 class="row-title">🇭🇰 Hong Kong Dramas</h2>
-          
-          <!-- Sub-category Tabs -->
-          <div class="filter-controls" style="width: 100%;">
-            <div class="filter-pills" id="hk-genre-tabs" style="overflow-x: auto; width: 100%; padding-bottom: 0.5rem; scrollbar-width: none;">
+      <div class="browse-container">
+        <!-- Tabs & Sorting Grid -->
+        <div class="search-filter-section" style="padding: 1.25rem;">
+          <div class="filter-controls" style="justify-content: space-between;">
+            <!-- Tabs: Movies vs TV -->
+            <div class="filter-pills" id="country-media-tabs">
+              <button class="filter-pill active" data-tab="movie">🎬 Movies</button>
+              <button class="filter-pill" data-tab="tv">📺 TV Series</button>
+            </div>
+            
+            <!-- Sort dropdown/selectors -->
+            <div class="select-dropdown-wrapper">
+              <select id="country-sort-select" class="select-dropdown">
+                <option value="popularity.desc">Popular</option>
+                <option value="vote_average.desc">Top Rated</option>
+                <option value="primary_release_date.desc">Latest</option>
+                <option value="primary_release_date.asc">Oldest</option>
+              </select>
+              <i data-lucide="chevron-down"></i>
+            </div>
+          </div>
+
+          <!-- Genre Filter Chips -->
+          <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <span class="modal-label" style="margin-bottom: 0;">Genres:</span>
+            <div class="filter-pills" id="country-genre-chips" style="overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; white-space: nowrap; -webkit-overflow-scrolling: touch; width: 100%;">
               <button class="filter-pill active" data-genre="all">All</button>
               <button class="filter-pill" data-genre="28">Action</button>
               <button class="filter-pill" data-genre="10749">Romance</button>
               <button class="filter-pill" data-genre="35">Comedy</button>
-              <button class="filter-pill" data-genre="80">Crime</button>
-              <button class="filter-pill" data-genre="36">History</button>
+              <button class="filter-pill" data-genre="18">Drama</button>
+              <button class="filter-pill" data-genre="53">Thriller</button>
+              <button class="filter-pill" data-genre="27">Horror</button>
+              <button class="filter-pill" data-genre="10751">Family</button>
             </div>
           </div>
         </div>
 
-        <!-- Grid -->
-        <div id="hk-drama-grid" class="browse-grid">
-          <!-- Populated dynamically -->
+        <!-- Grid of results -->
+        <div id="country-grid" class="browse-grid">
+          <!-- Dynamically populated -->
         </div>
 
-        <!-- Load More Container -->
+        <!-- Load More Pagination Button -->
         <div style="display: flex; justify-content: center; margin-top: 3rem; margin-bottom: 4rem;">
-          <button id="hk-load-more-btn" class="btn btn-secondary" style="padding: 0.85rem 2.5rem; font-weight: 700; gap: 0.5rem; display: none;">
+          <button id="country-load-more-btn" class="btn btn-secondary" style="padding: 0.85rem 2.5rem; font-weight: 700; gap: 0.5rem; display: none;">
             <i data-lucide="loader-2" class="animate-spin" style="display: none; width: 18px; height: 18px;"></i>
             <span>Load More</span>
           </button>
@@ -1820,20 +2031,43 @@
   <!-- ==========================================
        FOOTER
        ========================================== -->
-  <footer class="glass">
-    <div class="container footer-content">
-      <a href="#home" class="footer-logo">
-        <i data-lucide="clapperboard" style="color: var(--text-dark); fill: rgba(99, 102, 241, 0.05); display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
-        JV <span>Movie</span>
-      </a>
-      <ul class="footer-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#browse?type=movie">Movies</a></li>
-        <li><a href="#browse?type=tv">TV Series</a></li>
-        <li><a href="#browse">Browse All</a></li>
-        <li><a href="#terms">Terms & Conditions</a></li>
-      </ul>
-      <p>© 2026 JV Movie. All rights reserved. Data sourced via TMDB API. Video streams provided by third-party embed servers.</p>
+  <footer class="glass" style="border-top: 1px solid var(--glass-border); padding: 4rem 0 2rem 0; margin-top: 4rem; background: rgba(11, 10, 26, 0.95);">
+    <div class="container" style="display: flex; flex-direction: column; gap: 3rem;">
+      <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3rem; flex-wrap: wrap;" class="footer-grid-wrapper">
+        <!-- Left Column: Logo & Tagline -->
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <a href="#home" class="logo-container" style="font-size: 2.2rem; font-family: var(--font-display); text-decoration: none; color: #fff; display: flex; align-items: center; gap: 0.6rem;">
+            <i data-lucide="clapperboard" style="color: #22c55e; fill: rgba(99, 102, 241, 0.2);"></i>
+            JV<span>Movie</span>
+          </a>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 320px;">
+            Watch movies & dramas from every corner of the world.
+          </p>
+        </div>
+
+        <!-- Middle Column: Quick Links -->
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <h4 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">Quick Links</h4>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+            <li><a href="#home" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Home</a></li>
+            <li><a href="#browse?type=movie" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Movies</a></li>
+            <li><a href="#browse?type=tv" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">TV Series</a></li>
+            <li><a href="#browse" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">By Country</a></li>
+            <li><a href="#browse" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">By Genre</a></li>
+            <li><a href="#terms" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Terms & Conditions</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Disclaimer & Copyright -->
+      <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+        <p style="color: var(--text-dark); font-size: 0.85rem; max-width: 600px;">
+          Disclaimer: JV Movie does not host any video content. All streams are provided by third-party embed services.
+        </p>
+        <p style="color: var(--text-dark); font-size: 0.85rem;">
+          © 2025 JV Movie. All rights reserved.
+        </p>
+      </div>
     </div>
   </footer>
 
@@ -1915,17 +2149,80 @@
     // 1. CONFIGURATION & STATE
     // ==========================================
     
-    // REPLACE WITH YOUR TMDB API KEY (Optional, if empty user can set it via web UI)
     const TMDB_API_KEY = '479fa3d11019728110fb842a8ce17cd9'; 
+
+    const countryNames = {
+      MY: "Malaysia", KR: "Korea", JP: "Japan", CN: "China", TW: "Taiwan",
+      TH: "Thailand", PH: "Philippines", ID: "Indonesia", IN: "India", US: "USA", GB: "UK",
+      FR: "France", DE: "Germany", ES: "Spain", IT: "Italy", TR: "Turkey", SA: "Saudi Arabia",
+      BR: "Brazil", MX: "Mexico", AU: "Australia", CA: "Canada", RU: "Russia", NL: "Netherlands"
+    };
+
+    const countryFlags = {
+      MY: "🇲🇾", KR: "🇰🇷", JP: "🇯🇵", CN: "🇨🇳", TW: "🇹🇼",
+      TH: "🇹🇭", PH: "🇵🇭", ID: "🇮🇩", IN: "🇮🇳", US: "🇺🇸", GB: "🇬🇧",
+      FR: "🇫🇷", DE: "🇩🇪", ES: "🇪🇸", IT: "🇮🇹", TR: "🇹🇷", SA: "🇸🇦",
+      BR: "🇧🇷", MX: "🇲🇽", AU: "🇦🇺", CA: "🇨🇦", RU: "🇷🇺", NL: "🇳🇱"
+    };
+
+    const langToCountry = {
+      ko: 'KR', ja: 'JP', th: 'TH', hi: 'IN', ta: 'IN', te: 'IN', tr: 'TR', ms: 'MY',
+      id: 'ID', tl: 'PH', zh: 'CN', cn: 'CN', en: 'US', es: 'ES', fr: 'FR', de: 'DE',
+      it: 'IT', pt: 'BR', ar: 'SA', ru: 'RU', nl: 'NL'
+    };
+
+    function getCountryCode(item) {
+      if (item.origin_country && item.origin_country.length > 0) {
+        return item.origin_country[0].toUpperCase();
+      }
+      if (item.original_language) {
+        return (langToCountry[item.original_language] || '').toUpperCase();
+      }
+      return '';
+    }
+
+    function getCardCountryBadge(item) {
+      const code = getCountryCode(item);
+      if (!code) return '';
+      const flag = countryFlags[code] || '🌍';
+      return `
+        <div class="country-badge" style="position: absolute; bottom: 10px; left: 10px; z-index: 5; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: var(--border-radius-sm); display: flex; align-items: center; gap: 0.25rem; border: 1px solid rgba(255, 255, 255, 0.08);">
+          <span>${flag}</span> <span>${code}</span>
+        </div>
+      `;
+    }
+
+    function initLazyLoading() {
+      const lazyImages = document.querySelectorAll('.lazy-image');
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const image = entry.target;
+              image.src = image.getAttribute('data-src');
+              image.classList.remove('lazy-image');
+              imageObserver.unobserve(image);
+            }
+          });
+        });
+        lazyImages.forEach(image => imageObserver.observe(image));
+      } else {
+        lazyImages.forEach(image => {
+          image.src = image.getAttribute('data-src');
+        });
+      }
+    } 
 
     const state = {
       apiKey: TMDB_API_KEY,
       searchResults: [],
       browseFilters: {
         type: 'all', // all, movie, tv
-        genre: 'all', // all, genre_id, korean, hongkong
-        year: 'all',  // all, or year string
-        query: ''
+        genre: 'all', // all, genre_id
+        year: 'all',  // all, or year range/specific year
+        query: '',
+        country: 'all',
+        language: 'all'
       },
       watchData: {
         id: null,
@@ -1933,11 +2230,13 @@
         season: 1,
         episode: 1
       },
-      hkPage: {
+      countryPage: {
+        code: 'MY',
+        tab: 'movie',
+        sort: 'popularity.desc',
         genre: 'all',
         page: 1
       },
-      hkAuthorized: false,
       _pendingPasswordCb: null,
       cachedDetails: {}
     };
@@ -1965,6 +2264,25 @@
       
       // Setup Browse Page inputs search & filter listeners
       setupBrowseListeners();
+      setupCountryListeners();
+
+      // Setup mobile dropdown toggle
+      document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+          if (window.innerWidth <= 768) {
+            e.preventDefault();
+            e.stopPropagation();
+            const parent = toggle.parentElement;
+            document.querySelectorAll('.has-dropdown').forEach(d => {
+              if (d !== parent) d.classList.remove('active');
+            });
+            parent.classList.toggle('active');
+          }
+        });
+      });
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.has-dropdown').forEach(d => d.classList.remove('active'));
+      });
       
       // Setup SPA Hash routing
       window.addEventListener('hashchange', handleRoute);
@@ -1995,22 +2313,22 @@
         state.browseFilters.genre = params.get('genre') || 'all';
         state.browseFilters.year = params.get('year') || 'all';
         state.browseFilters.query = params.get('q') || '';
-        
-        // Gate HK Drama browse via URL
-        if (browseType === 'hongkong' && !state.hkAuthorized) {
-          requireHkAuth(() => {
-            syncBrowseUI();
-            switchPage('browse-page', () => loadBrowsePage());
-          });
-          return;
-        }
+        state.browseFilters.country = params.get('country') || 'all';
+        state.browseFilters.language = params.get('lang') || 'all';
         
         // Update filter inputs UI to match route params
         syncBrowseUI();
         
         switchPage('browse-page', () => loadBrowsePage());
-      } else if (route === 'hongkong') {
-        requireHkAuth(() => switchPage('hongkong-page', () => loadHongKongPage()));
+      } else if (route === 'country') {
+        const countryCode = params.get('code') || 'MY';
+        state.countryPage.code = countryCode.toUpperCase();
+        state.countryPage.tab = params.get('tab') || 'movie';
+        state.countryPage.sort = params.get('sort') || 'popularity.desc';
+        state.countryPage.genre = params.get('genre') || 'all';
+        state.countryPage.page = parseInt(params.get('page')) || 1;
+        
+        switchPage('country-page', () => loadCountryPage());
       } else if (route === 'terms') {
         switchPage('terms-page');
       } else {
@@ -2155,13 +2473,6 @@
       document.getElementById('site-password-input').value = '';
       document.getElementById('password-error-message').style.display = 'none';
       localStorage.removeItem('JV_MOVIE_AUTHORIZED');
-      // If HK auth was pending and user cancelled, redirect home
-      if (state._pendingPasswordCb && !state.hkAuthorized) {
-        const wasHkGate = document.getElementById('password-overlay-title').textContent.includes('HK Drama');
-        if (wasHkGate) {
-          window.location.hash = '#home';
-        }
-      }
       state._pendingPasswordCb = null;
     }
     
@@ -2224,21 +2535,7 @@
       }
     }
 
-    // Gate for HK Drama access — requires password once per session
-    function requireHkAuth(onGranted) {
-      if (state.hkAuthorized) {
-        onGranted();
-        return;
-      }
-      showPasswordOverlay(
-        '🔒 HK Drama Access',
-        'This section contains Hong Kong Drama content and is password-protected. Please enter your credentials to continue.',
-        () => {
-          state.hkAuthorized = true;
-          onGranted();
-        }
-      );
-    }
+
 
     function closeApiKeyModal() {
       document.getElementById('api-key-modal').classList.remove('active');
@@ -2269,7 +2566,7 @@
       }
     }
 
-    // Generic Fetch Client wrapper
+    // Generic Fetch Client wrapper with sessionStorage caching
     async function fetchTMDB(endpoint, queryParams = {}) {
       if (!state.apiKey) {
         throw new Error('API_KEY_MISSING');
@@ -2285,6 +2582,16 @@
         }
       }
 
+      const cacheKey = `tmdb_cache_${url.pathname}${url.search}`;
+      try {
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) {
+          return JSON.parse(cached);
+        }
+      } catch (e) {
+        console.warn("sessionStorage read error:", e);
+      }
+
       try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -2296,7 +2603,13 @@
           }
           throw new Error(`HTTP Error ${response.status}`);
         }
-        return await response.json();
+        const data = await response.json();
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify(data));
+        } catch (e) {
+          console.warn("sessionStorage write error:", e);
+        }
+        return data;
       } catch (err) {
         console.error(`TMDB API Error fetching ${endpoint}:`, err);
         throw err;
@@ -2329,6 +2642,165 @@
     }
 
     // ==========================================
+    // 3B. COUNTRY PAGE CONTROLLER
+    // ==========================================
+    
+    function setupCountryListeners() {
+      const mediaTabs = document.querySelectorAll('#country-media-tabs .filter-pill');
+      const sortSelect = document.getElementById('country-sort-select');
+      const genreChips = document.querySelectorAll('#country-genre-chips .filter-pill');
+      const loadMoreBtn = document.getElementById('country-load-more-btn');
+      
+      if (!mediaTabs.length || !sortSelect || !genreChips.length || !loadMoreBtn) return;
+      
+      mediaTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          mediaTabs.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.countryPage.tab = btn.getAttribute('data-tab');
+          state.countryPage.page = 1;
+          updateCountryUrl();
+        });
+      });
+      
+      sortSelect.addEventListener('change', (e) => {
+        state.countryPage.sort = e.target.value;
+        state.countryPage.page = 1;
+        updateCountryUrl();
+      });
+      
+      genreChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          genreChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          state.countryPage.genre = chip.getAttribute('data-genre');
+          state.countryPage.page = 1;
+          updateCountryUrl();
+        });
+      });
+      
+      loadMoreBtn.addEventListener('click', () => {
+        const spin = loadMoreBtn.querySelector('.animate-spin');
+        if (spin) spin.style.display = 'inline-block';
+        state.countryPage.page += 1;
+        updateCountryUrl();
+      });
+    }
+
+    function updateCountryUrl() {
+      const { code, tab, sort, genre, page } = state.countryPage;
+      const params = new URLSearchParams();
+      params.append('code', code);
+      if (tab !== 'movie') params.append('tab', tab);
+      if (sort !== 'popularity.desc') params.append('sort', sort);
+      if (genre !== 'all') params.append('genre', genre);
+      if (page > 1) params.append('page', page);
+      window.location.hash = `#country?${params.toString()}`;
+    }
+
+    async function loadCountryPage() {
+      if (!state.apiKey) return;
+      
+      const { code, tab, sort, genre, page } = state.countryPage;
+      const grid = document.getElementById('country-grid');
+      const loadMoreBtn = document.getElementById('country-load-more-btn');
+      
+      if (!grid || !loadMoreBtn) return;
+
+      const flag = countryFlags[code] || '🌍';
+      const name = countryNames[code] || 'International';
+      
+      // Update header
+      document.getElementById('country-hero-flag').textContent = flag;
+      document.getElementById('country-hero-name').textContent = name;
+      document.getElementById('country-hero-desc').textContent = `Explore popular movies and TV series from ${name}. Stream the latest updates, top rated dramas, and filter by sub-genres.`;
+      
+      // Sync UI components
+      document.querySelectorAll('#country-media-tabs .filter-pill').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tab) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+      document.getElementById('country-sort-select').value = sort;
+      document.querySelectorAll('#country-genre-chips .filter-pill').forEach(chip => {
+        if (chip.getAttribute('data-genre') === genre) chip.classList.add('active');
+        else chip.classList.remove('active');
+      });
+
+      const append = page > 1;
+      
+      if (!append) {
+        grid.innerHTML = Array(6).fill(0).map(() => `
+          <div class="card skeleton-card">
+            <div class="skeleton skeleton-poster"></div>
+            <div class="skeleton skeleton-text-md"></div>
+            <div class="skeleton skeleton-text-sm"></div>
+          </div>
+        `).join('');
+        loadMoreBtn.style.display = 'none';
+        document.getElementById('country-hero-bg').style.backgroundImage = '';
+      }
+      
+      try {
+        dismissError();
+        
+        let tmdbSort = sort;
+        if (tab === 'tv') {
+          tmdbSort = tmdbSort.replace('primary_release_date', 'first_air_date');
+        }
+        
+        const params = {
+          with_origin_country: code,
+          sort_by: tmdbSort,
+          page: page,
+          'vote_count.gte': 5
+        };
+        
+        if (genre !== 'all') {
+          params.with_genres = genre;
+        }
+
+        const endpoint = tab === 'movie' ? '/discover/movie' : '/discover/tv';
+        const res = await fetchTMDB(endpoint, params);
+        
+        if (!append) {
+          grid.innerHTML = '';
+        }
+        
+        const spin = loadMoreBtn.querySelector('.animate-spin');
+        if (spin) spin.style.display = 'none';
+        
+        if (res && res.results && res.results.length > 0) {
+          if (!append && res.results[0].backdrop_path) {
+            document.getElementById('country-hero-bg').style.backgroundImage = `url('${getBackdropUrl(res.results[0].backdrop_path)}')`;
+          }
+          
+          const cardsHtml = res.results.map(item => renderMovieCard({ ...item, media_type: tab })).join('');
+          grid.insertAdjacentHTML('beforeend', cardsHtml);
+          
+          if (res.page < res.total_pages) {
+            loadMoreBtn.style.display = 'inline-flex';
+          } else {
+            loadMoreBtn.style.display = 'none';
+          }
+        } else {
+          if (!append) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">No content found matching these filters.</div>`;
+          }
+          loadMoreBtn.style.display = 'none';
+        }
+        
+        initLazyLoading();
+        lucide.createIcons();
+      } catch (err) {
+        console.error("Error loading country page:", err);
+        showError("Failed to retrieve content for this country page.");
+        if (!append) {
+          grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">Content unavailable. Please verify API configuration or try again.</div>';
+        }
+      }
+    }
+
+    // ==========================================
     // 4. HOME PAGE CONTROLLER
     // ==========================================
     
@@ -2345,14 +2817,24 @@
         }
         
         // 2. Fetch all required layout categories concurrently
-        const [popularMovies, popularTV, topRatedMovies, topRatedTV, actionMovies, koreanDrama, hkDrama] = await Promise.all([
+        const [
+          popularMovies, popularTV, topRatedMovies, topRatedTV, actionMovies, koreanDrama,
+          malayDrama, thaiDrama, japanDrama, chinaDrama, indiaDrama, turkeyDrama, latinDrama, worldCinema
+        ] = await Promise.all([
           fetchTMDB('/movie/popular').catch(() => null),
           fetchTMDB('/tv/popular').catch(() => null),
           fetchTMDB('/movie/top_rated').catch(() => null),
           fetchTMDB('/tv/top_rated').catch(() => null),
           fetchTMDB('/discover/movie', { with_genres: 28 }).catch(() => null),
           fetchTMDB('/discover/tv', { with_origin_country: 'KR' }).catch(() => null),
-          fetchTMDB('/discover/tv', { with_origin_country: 'HK', with_original_language: 'zh', sort_by: 'popularity.desc' }).catch(() => null)
+          fetchTMDB('/discover/tv', { with_origin_country: 'MY', sort_by: 'popularity.desc' }).catch(() => null),
+          fetchTMDB('/discover/tv', { with_origin_country: 'TH', sort_by: 'popularity.desc' }).catch(() => null),
+          fetchTMDB('/discover/tv', { with_origin_country: 'JP', sort_by: 'popularity.desc' }).catch(() => null),
+          fetchTMDB('/discover/tv', { with_origin_country: 'CN', sort_by: 'popularity.desc' }).catch(() => null),
+          fetchTMDB('/discover/movie', { with_origin_country: 'IN', sort_by: 'popularity.desc' }).catch(() => null),
+          fetchTMDB('/discover/tv', { with_origin_country: 'TR', sort_by: 'popularity.desc' }).catch(() => null),
+          fetchTMDB('/discover/tv', { with_original_language: 'es', sort_by: 'popularity.desc' }).catch(() => null),
+          fetchTMDB('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100 }).catch(() => null)
         ]);
 
         const container = document.getElementById('home-rows-container');
@@ -2366,8 +2848,17 @@
         if (topRatedTV) injectCategoryRow(container, 'Top Rated TV Series', topRatedTV.results);
         if (actionMovies) injectCategoryRow(container, 'Action Movies', actionMovies.results);
         if (koreanDrama) injectCategoryRow(container, 'Korean Drama', koreanDrama.results);
-        if (hkDrama) injectCategoryRow(container, '🇭🇰 Hong Kong Dramas', hkDrama.results);
+
+        if (malayDrama) injectCategoryRow(container, '🇲🇾 Malaysian Drama', malayDrama.results);
+        if (thaiDrama) injectCategoryRow(container, '🇹🇭 Thai Drama', thaiDrama.results);
+        if (japanDrama) injectCategoryRow(container, '🇯🇵 Japanese Drama & Anime', japanDrama.results);
+        if (chinaDrama) injectCategoryRow(container, '🇨🇳 Chinese Drama', chinaDrama.results);
+        if (indiaDrama) injectCategoryRow(container, '🇮🇳 Bollywood & Indian Drama', indiaDrama.results);
+        if (turkeyDrama) injectCategoryRow(container, '🇹🇷 Turkish Drama', turkeyDrama.results);
+        if (latinDrama) injectCategoryRow(container, '🇧🇷 Spanish & Latin Drama', latinDrama.results);
+        if (worldCinema) injectCategoryRow(container, '🌍 World Cinema', worldCinema.results);
         
+        initLazyLoading();
         lucide.createIcons();
       } catch (err) {
         if (err.message === 'API_KEY_MISSING' || err.message === 'INVALID_API_KEY') {
@@ -2449,14 +2940,13 @@
       const year = releaseDate ? new Date(releaseDate).getFullYear() : 'N/A';
       const rating = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
       const type = isTV ? 'tv' : 'movie';
-      const isHK = item.origin_country && (Array.isArray(item.origin_country) ? item.origin_country.includes('HK') : item.origin_country === 'HK');
       
       // Dynamic element view transition configuration
       return `
         <a href="#watch?id=${item.id}&type=${type}" class="card" data-id="${item.id}" data-type="${type}">
           <div class="card-poster">
-            ${isHK ? '<div class="hk-badge">🇭🇰 HK Drama</div>' : ''}
-            <img src="${getPosterUrl(item.poster_path)}" alt="${title}" loading="lazy">
+            ${getCardCountryBadge(item)}
+            <img class="lazy-image" data-src="${getPosterUrl(item.poster_path)}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E" alt="${title}">
             <div class="card-overlay">
               <div class="card-overlay-btn"><i data-lucide="play" style="fill: white;"></i></div>
             </div>
@@ -2478,24 +2968,101 @@
     
     let searchDebounceTimer;
     
-    function populateYearSelect() {
-      const select = document.getElementById('year-select');
-      if (!select) return;
-      
-      const currentYear = new Date().getFullYear();
-      let optionsHtml = '<option value="all">All Years</option>';
-      for (let y = currentYear; y >= 1970; y--) {
-        optionsHtml += `<option value="${y}">${y}</option>`;
+    function populateBrowseSelectors() {
+      // 1. Country select
+      const countrySelect = document.getElementById('country-select');
+      if (countrySelect) {
+        let countryOptions = '<option value="all">Any Country</option>';
+        for (const [code, name] of Object.entries(countryNames)) {
+          const flag = countryFlags[code] || '';
+          countryOptions += `<option value="${code}">${flag} ${name}</option>`;
+        }
+        countrySelect.innerHTML = countryOptions;
       }
-      select.innerHTML = optionsHtml;
+
+      // 2. Genre select
+      const genreSelect = document.getElementById('genre-select');
+      if (genreSelect) {
+        const genres = [
+          { id: '28', name: 'Action' },
+          { id: '10749', name: 'Romance' },
+          { id: '35', name: 'Comedy' },
+          { id: '18', name: 'Drama' },
+          { id: '53', name: 'Thriller' },
+          { id: '27', name: 'Horror' },
+          { id: '878', name: 'Sci-Fi' },
+          { id: '16', name: 'Animation' },
+          { id: '10751', name: 'Family' },
+          { id: '99', name: 'Documentary' },
+          { id: '36', name: 'History' },
+          { id: '80', name: 'Crime' },
+          { id: '14', name: 'Fantasy' },
+          { id: '9648', name: 'Mystery' }
+        ];
+        let genreOptions = '<option value="all">Any Genre</option>';
+        genres.forEach(g => {
+          genreOptions += `<option value="${g.id}">${g.name}</option>`;
+        });
+        genreSelect.innerHTML = genreOptions;
+      }
+
+      // 3. Year select
+      const yearSelect = document.getElementById('year-select');
+      if (yearSelect) {
+        const yearsList = [
+          { code: '2025', name: '2025' },
+          { code: '2024', name: '2024' },
+          { code: '2023', name: '2023' },
+          { code: '2022', name: '2022' },
+          { code: '2021', name: '2021' },
+          { code: '2020', name: '2020' },
+          { code: '2019', name: '2019' },
+          { code: '2018', name: '2018' },
+          { code: '2010-2017', name: '2010-2017' },
+          { code: '2000-2009', name: '2000-2009' },
+          { code: 'before_2000', name: 'Before 2000' }
+        ];
+        let yearOptions = '<option value="all">Any Year</option>';
+        yearsList.forEach(y => {
+          yearOptions += `<option value="${y.code}">${y.name}</option>`;
+        });
+        yearSelect.innerHTML = yearOptions;
+      }
+
+      // 4. Language select
+      const languageSelect = document.getElementById('language-select');
+      if (languageSelect) {
+        const languages = [
+          { code: 'en', name: 'English' },
+          { code: 'ms', name: 'Malay' },
+          { code: 'zh', name: 'Chinese' },
+          { code: 'ko', name: 'Korean' },
+          { code: 'ja', name: 'Japanese' },
+          { code: 'th', name: 'Thai' },
+          { code: 'hi', name: 'Hindi' },
+          { code: 'ta', name: 'Tamil' },
+          { code: 'tr', name: 'Turkish' },
+          { code: 'es', name: 'Spanish' },
+          { code: 'fr', name: 'French' },
+          { code: 'ar', name: 'Arabic' },
+          { code: 'id', name: 'Indonesian' }
+        ];
+        let langOptions = '<option value="all">Any Language</option>';
+        languages.forEach(l => {
+          langOptions += `<option value="${l.code}">${l.name}</option>`;
+        });
+        languageSelect.innerHTML = langOptions;
+      }
     }
 
     function setupBrowseListeners() {
-      populateYearSelect();
+      populateBrowseSelectors();
 
       const searchInput = document.getElementById('search-input');
+      const countrySelect = document.getElementById('country-select');
       const genreSelect = document.getElementById('genre-select');
       const yearSelect = document.getElementById('year-select');
+      const languageSelect = document.getElementById('language-select');
       const typePills = document.querySelectorAll('#type-filter-pills .filter-pill');
       
       // Live search with debounce (300ms delay to limit API hammer)
@@ -2507,36 +3074,29 @@
         }, 300);
       });
       
-      // Genre filter dropdown
+      countrySelect.addEventListener('change', (e) => {
+        state.browseFilters.country = e.target.value;
+        updateBrowseUrl();
+      });
+
       genreSelect.addEventListener('change', (e) => {
         state.browseFilters.genre = e.target.value;
         updateBrowseUrl();
       });
 
-      // Year filter dropdown
-      if (yearSelect) {
-        yearSelect.addEventListener('change', (e) => {
-          state.browseFilters.year = e.target.value;
-          updateBrowseUrl();
-        });
-      }
+      yearSelect.addEventListener('change', (e) => {
+        state.browseFilters.year = e.target.value;
+        updateBrowseUrl();
+      });
+
+      languageSelect.addEventListener('change', (e) => {
+        state.browseFilters.language = e.target.value;
+        updateBrowseUrl();
+      });
       
-      // Media type selection
       typePills.forEach(pill => {
         pill.addEventListener('click', () => {
           const selectedType = pill.getAttribute('data-type');
-          
-          // Gate HK Drama pill behind password
-          if (selectedType === 'hongkong') {
-            requireHkAuth(() => {
-              typePills.forEach(p => p.classList.remove('active'));
-              pill.classList.add('active');
-              state.browseFilters.type = 'hongkong';
-              updateBrowseUrl();
-            });
-            return;
-          }
-
           typePills.forEach(p => p.classList.remove('active'));
           pill.classList.add('active');
           state.browseFilters.type = selectedType;
@@ -2547,13 +3107,15 @@
 
     // Push states to URL hash to keep links bookmarkable
     function updateBrowseUrl() {
-      const { type, genre, year, query } = state.browseFilters;
+      const { type, genre, year, query, country, language } = state.browseFilters;
       const params = new URLSearchParams();
       
       if (type !== 'all') params.append('type', type);
       if (genre !== 'all') params.append('genre', genre);
-      if (year && year !== 'all') params.append('year', year);
+      if (year !== 'all') params.append('year', year);
       if (query) params.append('q', query);
+      if (country !== 'all') params.append('country', country);
+      if (language !== 'all') params.append('lang', language);
       
       const queryString = params.toString();
       window.location.hash = `#browse${queryString ? '?' + queryString : ''}`;
@@ -2561,16 +3123,16 @@
 
     // Match browser controls with router parameters
     function syncBrowseUI() {
-      const yearSelect = document.getElementById('year-select');
-      if (yearSelect && (!yearSelect.options || yearSelect.options.length <= 1)) {
-        populateYearSelect();
+      const countrySelect = document.getElementById('country-select');
+      if (countrySelect && (!countrySelect.options || countrySelect.options.length <= 1)) {
+        populateBrowseSelectors();
       }
 
       document.getElementById('search-input').value = state.browseFilters.query || '';
+      document.getElementById('country-select').value = state.browseFilters.country || 'all';
       document.getElementById('genre-select').value = state.browseFilters.genre || 'all';
-      if (yearSelect) {
-        yearSelect.value = state.browseFilters.year || 'all';
-      }
+      document.getElementById('year-select').value = state.browseFilters.year || 'all';
+      document.getElementById('language-select').value = state.browseFilters.language || 'all';
       
       const typePills = document.querySelectorAll('#type-filter-pills .filter-pill');
       typePills.forEach(pill => {
@@ -2588,6 +3150,8 @@
       const grid = document.getElementById('browse-grid');
       const heading = document.getElementById('browse-heading');
       
+      if (!grid || !heading) return;
+
       // Render skeleton layout first
       grid.innerHTML = Array(12).fill(0).map(() => `
         <div class="card skeleton-card">
@@ -2599,7 +3163,7 @@
       
       try {
         dismissError();
-        const { type, genre, year, query } = state.browseFilters;
+        const { type, genre, year, query, country, language } = state.browseFilters;
         let items = [];
         
         // Custom heading description
@@ -2608,19 +3172,28 @@
           browseTitle = `Search Results for "${query}"`;
         } else {
           let typeText = 'Discover Content';
-          if (type === 'hongkong') typeText = 'Hong Kong Dramas';
-          else if (type === 'korean') typeText = 'Korean Dramas';
+          if (type === 'korean') typeText = 'Korean Dramas';
           else if (type === 'movie') typeText = 'Popular Movies';
           else if (type === 'tv') typeText = 'Popular TV Series';
           
-          if (genre !== 'all' && genre !== 'hongkong' && genre !== 'korean') {
-            const genreText = document.getElementById('genre-select').options[document.getElementById('genre-select').selectedIndex].text;
-            browseTitle = `${typeText} (${genreText})`;
+          if (genre !== 'all') {
+            const genreSelect = document.getElementById('genre-select');
+            if (genreSelect && genreSelect.selectedIndex >= 0) {
+              const genreText = genreSelect.options[genreSelect.selectedIndex].text;
+              browseTitle = `${typeText} (${genreText})`;
+            } else {
+              browseTitle = typeText;
+            }
           } else {
             browseTitle = typeText;
           }
         }
         
+        if (country !== 'all') {
+          const flag = countryFlags[country] || '';
+          const name = countryNames[country] || country;
+          browseTitle += ` - ${flag} ${name}`;
+        }
         if (year !== 'all') {
           browseTitle += ` (${year})`;
         }
@@ -2628,195 +3201,129 @@
         
         // Fetch logic based on Search Query vs Discover Browse
         if (query) {
-          if (genre === 'hongkong' || type === 'hongkong') {
-            const searchData = await fetchTMDB('/search/tv', { query, language: 'zh-HK' });
-            items = (searchData.results || []).map(i => ({ ...i, media_type: 'tv' }));
-          } else {
-            // TMDB MultiSearch
-            const searchData = await fetchTMDB('/search/multi', { query });
-            items = searchData.results || [];
-          }
+          // TMDB MultiSearch
+          const searchData = await fetchTMDB('/search/multi', { query });
+          items = searchData.results || [];
           
           // Apply client-side filters on search results
           items = items.filter(item => {
             // Filter by media type
             if (type === 'movie' && item.media_type !== 'movie') return false;
             if (type === 'tv' && item.media_type !== 'tv') return false;
-            if (type === 'hongkong') {
-              const isHK = item.origin_country && item.origin_country.includes('HK');
-              const isZh = item.original_language === 'zh' || item.original_language === 'cn';
-              if (!isHK && !isZh) return false;
-            }
+
             if (type === 'korean') {
               const isKR = item.origin_country && item.origin_country.includes('KR');
               if (!isKR) return false;
             }
-            if (item.media_type !== 'movie' && item.media_type !== 'tv') return false; // exclude people/actors from card lists
+            if (item.media_type !== 'movie' && item.media_type !== 'tv') return false; // exclude actors
+            
+            // Filter by country dropdown
+            if (country !== 'all') {
+              const itemCode = getCountryCode(item);
+              if (itemCode !== country) return false;
+            }
             
             // Filter by genres
             if (genre !== 'all') {
-              if (genre === 'korean') {
-                return item.origin_country && item.origin_country.includes('KR');
-              } else if (genre === 'hongkong') {
-                const isHK = item.origin_country && item.origin_country.includes('HK');
-                const isZh = item.original_language === 'zh' || item.original_language === 'cn';
-                return isHK || isZh;
-              } else {
-                const genreId = parseInt(genre);
-                return item.genre_ids && item.genre_ids.includes(genreId);
-              }
+              const genreId = parseInt(genre);
+              if (!item.genre_ids || !item.genre_ids.includes(genreId)) return false;
             }
             
             // Filter by year
             if (year !== 'all') {
               const releaseDate = item.release_date || item.first_air_date;
               if (!releaseDate) return false;
-              const itemYear = new Date(releaseDate).getFullYear().toString();
-              if (itemYear !== year) return false;
+              const itemYear = new Date(releaseDate).getFullYear();
+              if (year.includes('-')) {
+                const [start, end] = year.split('-').map(Number);
+                if (itemYear < start || itemYear > end) return false;
+              } else if (year.startsWith('before_')) {
+                const threshold = parseInt(year.replace('before_', ''));
+                if (itemYear >= threshold) return false;
+              } else {
+                if (itemYear.toString() !== year) return false;
+              }
             }
+
+            // Filter by language
+            if (language !== 'all') {
+              const itemLang = item.original_language;
+              if (itemLang !== language) return false;
+            }
+
             return true;
           });
         } else {
-          // Empty search, load discover listings
-          // Helper to get release date for sorting
+          // Empty search query, load discover listings
+          const movieParams = {
+            sort_by: 'primary_release_date.desc',
+            'vote_count.gte': 10
+          };
+          const tvParams = {
+            sort_by: 'first_air_date.desc',
+            'vote_count.gte': 10
+          };
+          
+          // 1. Country filter
+          let finalCountry = country;
+          if (type === 'korean') finalCountry = 'KR';
+          
+          if (finalCountry !== 'all') {
+            movieParams.with_origin_country = finalCountry;
+            tvParams.with_origin_country = finalCountry;
+          }
+          
+          // 2. Genre filter
+          if (genre !== 'all') {
+            const genreId = parseInt(genre);
+            movieParams.with_genres = genreId;
+            tvParams.with_genres = genreId;
+          }
+          
+          // 3. Year filter
+          if (year !== 'all') {
+            if (year.includes('-')) {
+              const [start, end] = year.split('-');
+              movieParams['primary_release_date.gte'] = `${start}-01-01`;
+              movieParams['primary_release_date.lte'] = `${end}-12-31`;
+              tvParams['first_air_date.gte'] = `${start}-01-01`;
+              tvParams['first_air_date.lte'] = `${end}-12-31`;
+            } else if (year.startsWith('before_')) {
+              const threshold = year.replace('before_', '');
+              movieParams['primary_release_date.lte'] = `${Number(threshold) - 1}-12-31`;
+              tvParams['first_air_date.lte'] = `${Number(threshold) - 1}-12-31`;
+            } else {
+              movieParams.primary_release_year = year;
+              tvParams.first_air_date_year = year;
+            }
+          }
+          
+          // 4. Language filter
+          let finalLang = language;
+          
+          if (finalLang !== 'all') {
+            movieParams.with_original_language = finalLang;
+            tvParams.with_original_language = finalLang;
+          }
+          
           const getDate = item => item.release_date || item.first_air_date || '1900-01-01';
           const sortByNewest = arr => arr.sort((a, b) => getDate(b).localeCompare(getDate(a)));
-
-          const isHK = (type === 'hongkong' || genre === 'hongkong');
-          const isKR = (type === 'korean' || genre === 'korean');
           
-          if (isHK) {
-            const movieParams = {
-              with_origin_country: 'HK',
-              with_original_language: 'zh',
-              sort_by: 'primary_release_date.desc',
-              'vote_count.gte': 5
-            };
-            const tvParams = {
-              with_origin_country: 'HK',
-              with_original_language: 'zh',
-              sort_by: 'first_air_date.desc',
-              'vote_count.gte': 5
-            };
-            if (year !== 'all') {
-              movieParams.primary_release_year = year;
-              tvParams.first_air_date_year = year;
-            }
-            if (genre !== 'all' && genre !== 'hongkong' && genre !== 'korean') {
-              const genreId = parseInt(genre);
-              movieParams.with_genres = genreId;
-              tvParams.with_genres = genreId;
-            }
-            
-            const [movRes, tvRes] = await Promise.all([
-              fetchTMDB('/discover/movie', movieParams),
-              fetchTMDB('/discover/tv', tvParams)
-            ]);
-            const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
-            const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-            items = sortByNewest([...movies, ...tvs]);
-          } else if (isKR) {
-            const movieParams = {
-              with_origin_country: 'KR',
-              sort_by: 'primary_release_date.desc',
-              'vote_count.gte': 5
-            };
-            const tvParams = {
-              with_origin_country: 'KR',
-              sort_by: 'first_air_date.desc',
-              'vote_count.gte': 5
-            };
-            if (year !== 'all') {
-              movieParams.primary_release_year = year;
-              tvParams.first_air_date_year = year;
-            }
-            if (genre !== 'all' && genre !== 'hongkong' && genre !== 'korean') {
-              const genreId = parseInt(genre);
-              movieParams.with_genres = genreId;
-              tvParams.with_genres = genreId;
-            }
-            
-            const [movRes, tvRes] = await Promise.all([
-              fetchTMDB('/discover/movie', movieParams),
-              fetchTMDB('/discover/tv', tvParams)
-            ]);
-            const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
-            const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-            items = sortByNewest([...movies, ...tvs]);
-          } else if (genre !== 'all') {
-            // Specific genre discovery
-            const genreId = parseInt(genre);
-            const movieParams = {
-              with_genres: genreId,
-              sort_by: 'primary_release_date.desc',
-              'vote_count.gte': 5
-            };
-            const tvParams = {
-              with_genres: genreId,
-              sort_by: 'first_air_date.desc',
-              'vote_count.gte': 5
-            };
-            if (year !== 'all') {
-              movieParams.primary_release_year = year;
-              tvParams.first_air_date_year = year;
-            }
-            
-            if (type === 'movie') {
-              const res = await fetchTMDB('/discover/movie', movieParams);
-              items = res.results.map(i => ({ ...i, media_type: 'movie' }));
-            } else if (type === 'tv') {
-              const res = await fetchTMDB('/discover/tv', tvParams);
-              items = res.results.map(i => ({ ...i, media_type: 'tv' }));
-            } else {
-              // both
-              const [movRes, tvRes] = await Promise.all([
-                fetchTMDB('/discover/movie', movieParams),
-                fetchTMDB('/discover/tv', tvParams)
-              ]);
-              const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
-              const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-              items = sortByNewest([...movies, ...tvs]);
-            }
+          if (type === 'movie') {
+            const res = await fetchTMDB('/discover/movie', movieParams);
+            items = res.results.map(i => ({ ...i, media_type: 'movie' }));
+          } else if (type === 'tv' || type === 'korean') {
+            const res = await fetchTMDB('/discover/tv', tvParams);
+            items = res.results.map(i => ({ ...i, media_type: 'tv' }));
           } else {
-            // General catalog — always sorted newest first
-            if (type === 'movie') {
-              const params = {
-                sort_by: 'primary_release_date.desc',
-                'vote_count.gte': 10
-              };
-              if (year !== 'all') params.primary_release_year = year;
-              const res = await fetchTMDB('/discover/movie', params);
-              items = res.results.map(i => ({ ...i, media_type: 'movie' }));
-            } else if (type === 'tv') {
-              const params = {
-                sort_by: 'first_air_date.desc',
-                'vote_count.gte': 10
-              };
-              if (year !== 'all') params.first_air_date_year = year;
-              const res = await fetchTMDB('/discover/tv', params);
-              items = res.results.map(i => ({ ...i, media_type: 'tv' }));
-            } else {
-              // All — combine movies + TV sorted newest
-              const movieParams = {
-                sort_by: 'primary_release_date.desc',
-                'vote_count.gte': 10
-              };
-              const tvParams = {
-                sort_by: 'first_air_date.desc',
-                'vote_count.gte': 10
-              };
-              if (year !== 'all') {
-                movieParams.primary_release_year = year;
-                tvParams.first_air_date_year = year;
-              }
-              const [movRes, tvRes] = await Promise.all([
-                fetchTMDB('/discover/movie', movieParams),
-                fetchTMDB('/discover/tv', tvParams)
-              ]);
-              const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
-              const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-              items = sortByNewest([...movies, ...tvs]);
-            }
+            // all
+            const [movRes, tvRes] = await Promise.all([
+              fetchTMDB('/discover/movie', movieParams).catch(() => ({ results: [] })),
+              fetchTMDB('/discover/tv', tvParams).catch(() => ({ results: [] }))
+            ]);
+            const movies = (movRes.results || []).map(i => ({ ...i, media_type: 'movie' }));
+            const tvs = (tvRes.results || []).map(i => ({ ...i, media_type: 'tv' }));
+            items = sortByNewest([...movies, ...tvs]);
           }
         }
         
@@ -2827,15 +3334,17 @@
             <div class="no-results">
               <i data-lucide="film"></i>
               <h3>No Content Found</h3>
-              <p>We couldn't find any results matching your filter selections. Try selecting another year or genre.</p>
+              <p>We couldn't find any results matching your filter selections. Try selecting another filter parameter.</p>
             </div>
           `;
         } else {
           grid.innerHTML = items.map(item => renderMovieCard(item)).join('');
         }
         
+        initLazyLoading();
         lucide.createIcons();
       } catch (err) {
+        console.error("Error loading browse page:", err);
         showError('Could not populate search results grid. Verify API access.');
       }
     }
@@ -2889,16 +3398,55 @@
         const genresBox = document.getElementById('watch-genres');
         genresBox.innerHTML = details.genres.map(g => `<span class="genre-tag">${g.name}</span>`).join('');
         
-        // HK Drama Overrides and Fallbacks
-        const isHK = details.origin_country && (Array.isArray(details.origin_country) ? details.origin_country.includes('HK') : details.origin_country === 'HK');
-        const fallbackBox = document.getElementById('hk-player-fallback');
-        if (isHK) {
-          fallbackBox.style.display = 'flex';
-          const dramaTitle = encodeURIComponent(title);
-          const youtubeUrl = `https://www.youtube.com/results?search_query=${dramaTitle}+full+episode+cantonese`;
-          document.getElementById('hk-youtube-fallback-btn').href = youtubeUrl;
-        } else {
-          fallbackBox.style.display = 'none';
+        // Country / Language Badge
+        const countryBadge = document.getElementById('watch-country-badge');
+        if (countryBadge) {
+          const code = getCountryCode(details);
+          const flag = countryFlags[code] || '🌍';
+          
+          const langNames = {
+            en: 'English', ms: 'Malay', zh: 'Chinese', cn: 'Chinese', ko: 'Korean',
+            ja: 'Japanese', th: 'Thai', hi: 'Hindi', ta: 'Tamil', tr: 'Turkish',
+            es: 'Spanish', fr: 'French', ar: 'Arabic', id: 'Indonesian'
+          };
+          const langName = langNames[details.original_language] || details.original_language.toUpperCase();
+          countryBadge.innerHTML = ` | ${flag} ${langName}`;
+        }
+
+        // Fallback Button Action wiring
+        const mirrorBtn = document.getElementById('btn-mirror-player');
+        const youtubeBtn = document.getElementById('btn-watch-youtube');
+        const googleBtn = document.getElementById('btn-search-online');
+        
+        const searchTitle = encodeURIComponent(title);
+        const searchYear = year !== 'N/A' ? year : '';
+        
+        if (mirrorBtn) {
+          mirrorBtn.onclick = () => {
+            const player = document.getElementById('video-player');
+            const loader = document.getElementById('player-loader');
+            const statusTxt = document.getElementById('player-status-txt');
+            
+            loader.style.display = 'flex';
+            statusTxt.textContent = 'Loading Mirror Player (vidsrc.to)...';
+            
+            const mirrorUrl = !isTV
+              ? `https://vidsrc.to/embed/movie/${id}`
+              : `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
+              
+            player.src = mirrorUrl;
+          };
+        }
+        
+        if (youtubeBtn) {
+          const ytQuery = isTV 
+            ? `${searchTitle}+S${season}E${episode}+full+episode` 
+            : `${searchTitle}+${searchYear}+full+movie`;
+          youtubeBtn.href = `https://www.youtube.com/results?search_query=${ytQuery}`;
+        }
+        
+        if (googleBtn) {
+          googleBtn.href = `https://www.google.com/search?q=watch+${searchTitle}+${searchYear}+online+free`;
         }
 
         // 2Embed video loader logic
@@ -2933,7 +3481,11 @@
     async function setupTvSelectors(details, activeSeason, activeEpisode) {
       const container = document.getElementById('tv-episode-selector');
       const seasonSelect = document.getElementById('season-select');
+      const episodeSelect = document.getElementById('episode-select');
       const episodesGrid = document.getElementById('episodes-grid');
+      const episodeSelectWrapper = document.getElementById('episode-select-wrapper');
+      
+      if (!container || !seasonSelect || !episodeSelect || !episodesGrid) return;
       
       container.style.display = 'block';
       
@@ -2945,6 +3497,14 @@
         
         // Populate episodes from total episodes (forced season 1)
         const episodeCount = details.number_of_episodes || 1;
+        
+        // Dropdown
+        let epOptions = '';
+        for (let i = 1; i <= episodeCount; i++) {
+          epOptions += `<option value="${i}" ${i === activeEpisode ? 'selected' : ''}>Episode ${i}</option>`;
+        }
+        episodeSelect.innerHTML = epOptions;
+        
         episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
           const epNum = idx + 1;
           const isActive = epNum === activeEpisode;
@@ -2952,6 +3512,7 @@
         }).join('');
       } else {
         if (seasonWrapper) seasonWrapper.style.display = 'flex';
+        if (episodeSelectWrapper) episodeSelectWrapper.style.display = 'flex';
         
         // Populate Seasons dropdown
         seasonSelect.innerHTML = details.seasons
@@ -2959,32 +3520,41 @@
           .map(s => `<option value="${s.season_number}" ${s.season_number === activeSeason ? 'selected' : ''}>Season ${s.season_number}</option>`)
           .join('');
           
+        let episodeCount = 10;
+        
         // Fetch details of active season to know how many episodes exist
         try {
           const seasonDetails = await fetchTMDB(`/tv/${details.id}/season/${activeSeason}`);
-          const episodeCount = seasonDetails.episodes ? seasonDetails.episodes.length : 0;
-          
-          episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
-            const epNum = idx + 1;
-            const isActive = epNum === activeEpisode;
-            return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, ${activeSeason}, ${epNum})">${epNum}</button>`;
-          }).join('');
+          episodeCount = seasonDetails.episodes ? seasonDetails.episodes.length : 0;
         } catch (err) {
           // Fallback: use generic counts from season index list
           const activeSeasonObj = details.seasons.find(s => s.season_number === activeSeason);
-          const episodeCount = activeSeasonObj ? activeSeasonObj.episode_count : 10;
-          
-          episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
-            const epNum = idx + 1;
-            const isActive = epNum === activeEpisode;
-            return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, ${activeSeason}, ${epNum})">${epNum}</button>`;
-          }).join('');
+          episodeCount = activeSeasonObj ? activeSeasonObj.episode_count : 10;
         }
+        
+        // Dropdown
+        let epOptions = '';
+        for (let i = 1; i <= episodeCount; i++) {
+          epOptions += `<option value="${i}" ${i === activeEpisode ? 'selected' : ''}>Episode ${i}</option>`;
+        }
+        episodeSelect.innerHTML = epOptions;
+        
+        episodesGrid.innerHTML = Array(episodeCount).fill(0).map((_, idx) => {
+          const epNum = idx + 1;
+          const isActive = epNum === activeEpisode;
+          return `<button class="episode-btn ${isActive ? 'active' : ''}" onclick="changeTvEpisode(${details.id}, ${activeSeason}, ${epNum})">${epNum}</button>`;
+        }).join('');
         
         // Season change event listener
         seasonSelect.onchange = (e) => {
           const selectedSeason = parseInt(e.target.value);
           changeTvEpisode(details.id, selectedSeason, 1);
+        };
+        
+        // Episode change event listener
+        episodeSelect.onchange = (e) => {
+          const selectedEpisode = parseInt(e.target.value);
+          changeTvEpisode(details.id, activeSeason, selectedEpisode);
         };
       }
     }
@@ -3038,147 +3608,7 @@
       }
     }
 
-    // ==========================================
-    // 7. HONG KONG DRAMA PAGE CONTROLLER
-    // ==========================================
-    
-    async function loadHongKongPage(resetGrid = true) {
-      if (!state.apiKey) return;
 
-      const grid = document.getElementById('hk-drama-grid');
-      const loadMoreBtn = document.getElementById('hk-load-more-btn');
-      
-      if (resetGrid) {
-        state.hkPage.page = 1;
-        grid.innerHTML = Array(12).fill(0).map(() => `
-          <div class="card skeleton-card">
-            <div class="skeleton skeleton-poster"></div>
-            <div class="skeleton skeleton-text-md"></div>
-            <div class="skeleton skeleton-text-sm"></div>
-          </div>
-        `).join('');
-        loadMoreBtn.style.display = 'none';
-      }
-
-      try {
-        dismissError();
-        const genreId = state.hkPage.genre;
-        const pageNum = state.hkPage.page;
-        
-        // Setup query params
-        const params = {
-          with_origin_country: 'HK',
-          with_original_language: 'zh',
-          sort_by: 'first_air_date.desc',
-          'vote_count.gte': 5,
-          page: pageNum
-        };
-        
-        if (genreId !== 'all') {
-          params.with_genres = genreId;
-        }
-
-        const data = await fetchTMDB('/discover/tv', params);
-        const results = data.results || [];
-
-        // Setup Hero Banner on the first load of page 1
-        if (pageNum === 1 && results.length > 0) {
-          setupHkHero(results[0]);
-        }
-
-        if (resetGrid) {
-          grid.innerHTML = '';
-        }
-
-        if (results.length === 0 && pageNum === 1) {
-          grid.innerHTML = `
-            <div class="no-results">
-              <i data-lucide="film"></i>
-              <h3>No Dramas Found</h3>
-              <p>Could not find any Hong Kong dramas for this sub-category.</p>
-            </div>
-          `;
-          loadMoreBtn.style.display = 'none';
-        } else {
-          // Render results
-          const cardsHtml = results.map(item => {
-            return renderMovieCard({ ...item, media_type: 'tv' });
-          }).join('');
-          
-          if (resetGrid) {
-            grid.innerHTML = cardsHtml;
-          } else {
-            grid.insertAdjacentHTML('beforeend', cardsHtml);
-          }
-
-          // Show/hide pagination load more button
-          if (data.page < data.total_pages) {
-            loadMoreBtn.style.display = 'inline-flex';
-            // Setup listener
-            loadMoreBtn.onclick = () => {
-              state.hkPage.page++;
-              loadHongKongPage(false);
-            };
-          } else {
-            loadMoreBtn.style.display = 'none';
-          }
-        }
-
-        // Setup tabs listeners
-        setupHkTabsListeners();
-        lucide.createIcons();
-      } catch (err) {
-        showError('Could not populate Hong Kong Drama page. Check API configurations.');
-      }
-    }
-
-    function setupHkHero(item) {
-      const bg = document.getElementById('hk-hero-bg');
-      const title = document.getElementById('hk-hero-title');
-      const rating = document.getElementById('hk-hero-rating');
-      const year = document.getElementById('hk-hero-year');
-      const desc = document.getElementById('hk-hero-desc');
-      const playBtn = document.getElementById('hk-hero-play-btn');
-      
-      const titleText = item.name;
-      const releaseDate = item.first_air_date;
-      const yearText = releaseDate ? new Date(releaseDate).getFullYear() : '2026';
-      
-      bg.style.backgroundImage = `url('${getBackdropUrl(item.backdrop_path)}')`;
-      title.textContent = titleText;
-      rating.textContent = item.vote_average ? item.vote_average.toFixed(1) : '8.0';
-      year.textContent = yearText;
-      desc.textContent = item.overview || 'Stream premium Hong Kong dramas online.';
-      
-      playBtn.href = `#watch?id=${item.id}&type=tv`;
-    }
-
-    function setupHkTabsListeners() {
-      const tabs = document.querySelectorAll('#hk-genre-tabs .filter-pill');
-      tabs.forEach(tab => {
-        // Remove old click listener to avoid duplicate trigger
-        tab.replaceWith(tab.cloneNode(true));
-      });
-
-      // Re-fetch clean list of tab buttons
-      const newTabs = document.querySelectorAll('#hk-genre-tabs .filter-pill');
-      newTabs.forEach(tab => {
-        const genreVal = tab.getAttribute('data-genre');
-        // Set active class visually based on state.hkPage.genre
-        if (genreVal === state.hkPage.genre) {
-          tab.classList.add('active');
-        } else {
-          tab.classList.remove('active');
-        }
-
-        tab.addEventListener('click', () => {
-          newTabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          state.hkPage.genre = genreVal;
-          loadHongKongPage(true);
-        });
-      });
-    }
   </script>
 </body>
 </html>
