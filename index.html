@@ -1714,7 +1714,6 @@
 
       <div class="modal-actions" style="display: flex; gap: 0.5rem; justify-content: flex-end; width: 100%;">
         <button class="btn btn-secondary" onclick="closeApiKeyModal()" style="padding: 0.6rem 1rem; font-size: 0.85rem; flex-grow: 1;">Cancel</button>
-        <button class="btn btn-secondary" onclick="lockApiSettings()" style="padding: 0.6rem 1rem; font-size: 0.85rem; border-color: rgba(255, 71, 87, 0.3); color: #ff4757; flex-grow: 1;">Lock Settings</button>
         <button class="btn btn-primary" onclick="saveApiKey()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; flex-grow: 1;">Save Changes</button>
       </div>
     </div>
@@ -1904,6 +1903,9 @@
     // ==========================================
     
     function initPasswordCheck() {
+      // Clear authorization on load so access is always locked on start
+      localStorage.removeItem('JV_MOVIE_AUTHORIZED');
+
       // Setup toggling visibilities
       const passInput = document.getElementById('site-password-input');
       const passToggle = document.getElementById('password-toggle-btn');
@@ -1937,6 +1939,7 @@
       screen.classList.add('hidden');
       document.getElementById('site-password-input').value = '';
       document.getElementById('password-error-message').style.display = 'none';
+      localStorage.removeItem('JV_MOVIE_AUTHORIZED');
     }
     
     function verifySitePassword() {
@@ -1989,12 +1992,7 @@
 
     function closeApiKeyModal() {
       document.getElementById('api-key-modal').classList.remove('active');
-    }
-
-    function lockApiSettings() {
       localStorage.removeItem('JV_MOVIE_AUTHORIZED');
-      closeApiKeyModal();
-      initApiKey();
     }
 
     function saveApiKey() {
