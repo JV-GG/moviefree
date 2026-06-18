@@ -1421,16 +1421,17 @@
   <!-- ==========================================
        SITE PASSWORD PROTECTION OVERLAY
        ========================================== -->
-  <div id="password-protection-screen" class="password-overlay">
+  <div id="password-protection-screen" class="password-overlay hidden">
     <div class="modal-box" style="text-align: center; border-color: rgba(124, 58, 237, 0.4); box-shadow: 0 0 50px rgba(124, 58, 237, 0.3);">
+      <button class="modal-close" onclick="closePasswordScreen()"><i data-lucide="x"></i></button>
       <div style="background: var(--accent-gradient); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);">
         <i data-lucide="lock" style="color: white; width: 26px; height: 26px;"></i>
       </div>
-      <h2 style="font-weight: 850; font-size: 1.6rem; margin-bottom: 0.75rem; letter-spacing: -0.5px;">Credential Required</h2>
-      <p class="modal-desc" style="margin-bottom: 1.5rem;">Access to JV Movie platform is restricted. Please enter the access password to view content.</p>
+      <h2 style="font-weight: 850; font-size: 1.6rem; margin-bottom: 0.75rem; letter-spacing: -0.5px;">API Settings Lock</h2>
+      <p class="modal-desc" style="margin-bottom: 1.5rem;">Access to TMDB API Settings is restricted. Please enter the credentials password to view or modify API configurations.</p>
       
       <div class="modal-input-group" style="text-align: left;">
-        <label for="site-password-input" class="modal-label">Access Password</label>
+        <label for="site-password-input" class="modal-label">Credentials Password</label>
         <div style="position: relative;">
           <input type="password" id="site-password-input" class="modal-input" placeholder="Enter password..." style="padding-right: 3rem;">
           <button type="button" id="password-toggle-btn" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center;">
@@ -1446,7 +1447,7 @@
     </div>
   </div>
 
-  <div id="site-main-wrapper" class="blurred-content" style="display: flex; flex-direction: column; min-height: 100vh;">
+  <div id="site-main-wrapper" style="display: flex; flex-direction: column; min-height: 100vh;">
 
   <!-- ==========================================
        NAVBAR / HEADER
@@ -1454,7 +1455,7 @@
   <header id="site-header" class="glass">
     <div class="container navbar">
       <a href="#home" class="logo-container">
-        <i data-lucide="play-circle" style="fill: var(--accent); color: white;"></i>
+        <i data-lucide="clapperboard" style="color: #22c55e; fill: rgba(99, 102, 241, 0.2);"></i>
         JV <span>Movie</span>
       </a>
       
@@ -1677,7 +1678,7 @@
   <footer class="glass">
     <div class="container footer-content">
       <a href="#home" class="footer-logo">
-        <i data-lucide="play-circle" style="fill: var(--text-dark); color: #0a0a0f; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+        <i data-lucide="clapperboard" style="color: var(--text-dark); fill: rgba(99, 102, 241, 0.05); display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
         JV <span>Movie</span>
       </a>
       <ul class="footer-links">
@@ -1711,9 +1712,10 @@
         </p>
       </div>
 
-      <div class="modal-actions">
-        <button class="btn btn-secondary" onclick="closeApiKeyModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveApiKey()">Save Changes</button>
+      <div class="modal-actions" style="display: flex; gap: 0.5rem; justify-content: flex-end; width: 100%;">
+        <button class="btn btn-secondary" onclick="closeApiKeyModal()" style="padding: 0.6rem 1rem; font-size: 0.85rem; flex-grow: 1;">Cancel</button>
+        <button class="btn btn-secondary" onclick="lockApiSettings()" style="padding: 0.6rem 1rem; font-size: 0.85rem; border-color: rgba(255, 71, 87, 0.3); color: #ff4757; flex-grow: 1;">Lock Settings</button>
+        <button class="btn btn-primary" onclick="saveApiKey()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; flex-grow: 1;">Save Changes</button>
       </div>
     </div>
   </div>
@@ -1902,19 +1904,11 @@
     // ==========================================
     
     function initPasswordCheck() {
-      // Check local storage for existing session authorization
-      const isAuthorized = localStorage.getItem('JV_MOVIE_AUTHORIZED');
-      const screen = document.getElementById('password-protection-screen');
-      const wrapper = document.getElementById('site-main-wrapper');
-      
-      if (isAuthorized === 'true') {
-        screen.classList.add('hidden');
-        wrapper.classList.remove('blurred-content');
-      }
-      
       // Setup toggling visibilities
       const passInput = document.getElementById('site-password-input');
       const passToggle = document.getElementById('password-toggle-btn');
+      
+      if (!passInput || !passToggle) return;
       
       passToggle.onclick = () => {
         const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -1938,6 +1932,13 @@
       };
     }
     
+    function closePasswordScreen() {
+      const screen = document.getElementById('password-protection-screen');
+      screen.classList.add('hidden');
+      document.getElementById('site-password-input').value = '';
+      document.getElementById('password-error-message').style.display = 'none';
+    }
+    
     function verifySitePassword() {
       const password = document.getElementById('site-password-input').value;
       const errorMsg = document.getElementById('password-error-message');
@@ -1945,17 +1946,18 @@
       if (password === 'Chen@12345678') {
         localStorage.setItem('JV_MOVIE_AUTHORIZED', 'true');
         const screen = document.getElementById('password-protection-screen');
-        const wrapper = document.getElementById('site-main-wrapper');
         
-        // Smoothly fade out screen and clear blurs
+        // Hide password screen
         screen.classList.add('hidden');
-        wrapper.classList.remove('blurred-content');
         errorMsg.style.display = 'none';
         
-        // Remove overlay DOM element after transition completes to ensure clean pointer interactions
+        // Clear input value
+        document.getElementById('site-password-input').value = '';
+        
+        // Now open the api key modal
         setTimeout(() => {
-          screen.remove();
-        }, 400);
+          openApiKeyModal();
+        }, 300);
       } else {
         errorMsg.style.display = 'block';
         // Add shake animation/visual indicator
@@ -1968,14 +1970,31 @@
     }
 
     function openApiKeyModal() {
-      const modal = document.getElementById('api-key-modal');
-      const input = document.getElementById('modal-api-key-input');
-      input.value = state.apiKey || '';
-      modal.classList.add('active');
+      // Check if authorized
+      const isAuthorized = localStorage.getItem('JV_MOVIE_AUTHORIZED');
+      if (isAuthorized === 'true') {
+        const modal = document.getElementById('api-key-modal');
+        const input = document.getElementById('modal-api-key-input');
+        input.value = state.apiKey || '';
+        modal.classList.add('active');
+      } else {
+        // Show password protection overlay
+        const screen = document.getElementById('password-protection-screen');
+        screen.classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('site-password-input').focus();
+        }, 100);
+      }
     }
 
     function closeApiKeyModal() {
       document.getElementById('api-key-modal').classList.remove('active');
+    }
+
+    function lockApiSettings() {
+      localStorage.removeItem('JV_MOVIE_AUTHORIZED');
+      closeApiKeyModal();
+      initApiKey();
     }
 
     function saveApiKey() {
