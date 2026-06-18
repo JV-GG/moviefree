@@ -2618,12 +2618,26 @@
           });
         } else {
           // Empty search, load discover listings
+          // Helper to get release date for sorting
+          const getDate = item => item.release_date || item.first_air_date || '1900-01-01';
+          const sortByNewest = arr => arr.sort((a, b) => getDate(b).localeCompare(getDate(a)));
+
           const isHK = (type === 'hongkong' || genre === 'hongkong');
           const isKR = (type === 'korean' || genre === 'korean');
           
           if (isHK) {
-            const movieParams = { with_origin_country: 'HK', with_original_language: 'zh' };
-            const tvParams = { with_origin_country: 'HK', with_original_language: 'zh' };
+            const movieParams = {
+              with_origin_country: 'HK',
+              with_original_language: 'zh',
+              sort_by: 'primary_release_date.desc',
+              'vote_count.gte': 5
+            };
+            const tvParams = {
+              with_origin_country: 'HK',
+              with_original_language: 'zh',
+              sort_by: 'first_air_date.desc',
+              'vote_count.gte': 5
+            };
             if (year !== 'all') {
               movieParams.primary_release_year = year;
               tvParams.first_air_date_year = year;
@@ -2640,14 +2654,18 @@
             ]);
             const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
             const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-            items = [];
-            for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
-              if (movies[i]) items.push(movies[i]);
-              if (tvs[i]) items.push(tvs[i]);
-            }
+            items = sortByNewest([...movies, ...tvs]);
           } else if (isKR) {
-            const movieParams = { with_origin_country: 'KR' };
-            const tvParams = { with_origin_country: 'KR' };
+            const movieParams = {
+              with_origin_country: 'KR',
+              sort_by: 'primary_release_date.desc',
+              'vote_count.gte': 5
+            };
+            const tvParams = {
+              with_origin_country: 'KR',
+              sort_by: 'first_air_date.desc',
+              'vote_count.gte': 5
+            };
             if (year !== 'all') {
               movieParams.primary_release_year = year;
               tvParams.first_air_date_year = year;
@@ -2664,16 +2682,20 @@
             ]);
             const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
             const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-            items = [];
-            for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
-              if (movies[i]) items.push(movies[i]);
-              if (tvs[i]) items.push(tvs[i]);
-            }
+            items = sortByNewest([...movies, ...tvs]);
           } else if (genre !== 'all') {
             // Specific genre discovery
             const genreId = parseInt(genre);
-            const movieParams = { with_genres: genreId };
-            const tvParams = { with_genres: genreId };
+            const movieParams = {
+              with_genres: genreId,
+              sort_by: 'primary_release_date.desc',
+              'vote_count.gte': 5
+            };
+            const tvParams = {
+              with_genres: genreId,
+              sort_by: 'first_air_date.desc',
+              'vote_count.gte': 5
+            };
             if (year !== 'all') {
               movieParams.primary_release_year = year;
               tvParams.first_air_date_year = year;
@@ -2693,38 +2715,47 @@
               ]);
               const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
               const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-              items = [...movies, ...tvs].sort((a, b) => b.popularity - a.popularity);
+              items = sortByNewest([...movies, ...tvs]);
             }
           } else {
-            // General trending/popular catalog
-            if (year === 'all') {
-              if (type === 'movie') {
-                const res = await fetchTMDB('/movie/popular');
-                items = res.results.map(i => ({ ...i, media_type: 'movie' }));
-              } else if (type === 'tv') {
-                const res = await fetchTMDB('/tv/popular');
-                items = res.results.map(i => ({ ...i, media_type: 'tv' }));
-              } else {
-                const res = await fetchTMDB('/trending/all/week');
-                items = res.results;
-              }
+            // General catalog — always sorted newest first
+            if (type === 'movie') {
+              const params = {
+                sort_by: 'primary_release_date.desc',
+                'vote_count.gte': 10
+              };
+              if (year !== 'all') params.primary_release_year = year;
+              const res = await fetchTMDB('/discover/movie', params);
+              items = res.results.map(i => ({ ...i, media_type: 'movie' }));
+            } else if (type === 'tv') {
+              const params = {
+                sort_by: 'first_air_date.desc',
+                'vote_count.gte': 10
+              };
+              if (year !== 'all') params.first_air_date_year = year;
+              const res = await fetchTMDB('/discover/tv', params);
+              items = res.results.map(i => ({ ...i, media_type: 'tv' }));
             } else {
-              // Discover for specific year
-              if (type === 'movie') {
-                const res = await fetchTMDB('/discover/movie', { primary_release_year: year });
-                items = res.results.map(i => ({ ...i, media_type: 'movie' }));
-              } else if (type === 'tv') {
-                const res = await fetchTMDB('/discover/tv', { first_air_date_year: year });
-                items = res.results.map(i => ({ ...i, media_type: 'tv' }));
-              } else {
-                const [movRes, tvRes] = await Promise.all([
-                  fetchTMDB('/discover/movie', { primary_release_year: year }),
-                  fetchTMDB('/discover/tv', { first_air_date_year: year })
-                ]);
-                const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
-                const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-                items = [...movies, ...tvs].sort((a, b) => b.popularity - a.popularity);
+              // All — combine movies + TV sorted newest
+              const movieParams = {
+                sort_by: 'primary_release_date.desc',
+                'vote_count.gte': 10
+              };
+              const tvParams = {
+                sort_by: 'first_air_date.desc',
+                'vote_count.gte': 10
+              };
+              if (year !== 'all') {
+                movieParams.primary_release_year = year;
+                tvParams.first_air_date_year = year;
               }
+              const [movRes, tvRes] = await Promise.all([
+                fetchTMDB('/discover/movie', movieParams),
+                fetchTMDB('/discover/tv', tvParams)
+              ]);
+              const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
+              const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
+              items = sortByNewest([...movies, ...tvs]);
             }
           }
         }
