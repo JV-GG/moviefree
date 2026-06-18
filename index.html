@@ -1578,6 +1578,8 @@
               <button class="filter-pill active" data-type="all">All</button>
               <button class="filter-pill" data-type="movie">Movies</button>
               <button class="filter-pill" data-type="tv">TV Series</button>
+              <button class="filter-pill" data-type="hongkong">HK Drama</button>
+              <button class="filter-pill" data-type="korean">K-Drama</button>
             </div>
             
             <div class="select-dropdown-wrapper">
@@ -1591,6 +1593,13 @@
                 <option value="878">Sci-Fi / Fantasy</option>
                 <option value="korean">Korean Drama</option>
                 <option value="hongkong">Hong Kong Drama</option>
+              </select>
+              <i data-lucide="chevron-down"></i>
+            </div>
+
+            <div class="select-dropdown-wrapper">
+              <select id="year-select" class="select-dropdown">
+                <option value="all">All Years</option>
               </select>
               <i data-lucide="chevron-down"></i>
             </div>
@@ -1915,6 +1924,7 @@
       browseFilters: {
         type: 'all', // all, movie, tv
         genre: 'all', // all, genre_id, korean, hongkong
+        year: 'all',  // all, or year string
         query: ''
       },
       watchData: {
@@ -1980,6 +1990,7 @@
       } else if (route === 'browse') {
         state.browseFilters.type = params.get('type') || 'all';
         state.browseFilters.genre = params.get('genre') || 'all';
+        state.browseFilters.year = params.get('year') || 'all';
         state.browseFilters.query = params.get('q') || '';
         
         // Update filter inputs UI to match route params
@@ -2420,9 +2431,24 @@
     
     let searchDebounceTimer;
     
+    function populateYearSelect() {
+      const select = document.getElementById('year-select');
+      if (!select) return;
+      
+      const currentYear = new Date().getFullYear();
+      let optionsHtml = '<option value="all">All Years</option>';
+      for (let y = currentYear; y >= 1970; y--) {
+        optionsHtml += `<option value="${y}">${y}</option>`;
+      }
+      select.innerHTML = optionsHtml;
+    }
+
     function setupBrowseListeners() {
+      populateYearSelect();
+
       const searchInput = document.getElementById('search-input');
       const genreSelect = document.getElementById('genre-select');
+      const yearSelect = document.getElementById('year-select');
       const typePills = document.querySelectorAll('#type-filter-pills .filter-pill');
       
       // Live search with debounce (300ms delay to limit API hammer)
@@ -2439,6 +2465,14 @@
         state.browseFilters.genre = e.target.value;
         updateBrowseUrl();
       });
+
+      // Year filter dropdown
+      if (yearSelect) {
+        yearSelect.addEventListener('change', (e) => {
+          state.browseFilters.year = e.target.value;
+          updateBrowseUrl();
+        });
+      }
       
       // Media type selection
       typePills.forEach(pill => {
@@ -2453,11 +2487,12 @@
 
     // Push states to URL hash to keep links bookmarkable
     function updateBrowseUrl() {
-      const { type, genre, query } = state.browseFilters;
+      const { type, genre, year, query } = state.browseFilters;
       const params = new URLSearchParams();
       
       if (type !== 'all') params.append('type', type);
       if (genre !== 'all') params.append('genre', genre);
+      if (year && year !== 'all') params.append('year', year);
       if (query) params.append('q', query);
       
       const queryString = params.toString();
@@ -2466,8 +2501,16 @@
 
     // Match browser controls with router parameters
     function syncBrowseUI() {
+      const yearSelect = document.getElementById('year-select');
+      if (yearSelect && (!yearSelect.options || yearSelect.options.length <= 1)) {
+        populateYearSelect();
+      }
+
       document.getElementById('search-input').value = state.browseFilters.query || '';
       document.getElementById('genre-select').value = state.browseFilters.genre || 'all';
+      if (yearSelect) {
+        yearSelect.value = state.browseFilters.year || 'all';
+      }
       
       const typePills = document.querySelectorAll('#type-filter-pills .filter-pill');
       typePills.forEach(pill => {
@@ -2496,26 +2539,36 @@
       
       try {
         dismissError();
-        const { type, genre, query } = state.browseFilters;
+        const { type, genre, year, query } = state.browseFilters;
         let items = [];
         
         // Custom heading description
         let browseTitle = 'Discover Content';
         if (query) {
           browseTitle = `Search Results for "${query}"`;
-        } else if (genre !== 'all') {
-          const genreText = document.getElementById('genre-select').options[document.getElementById('genre-select').selectedIndex].text;
-          browseTitle = `Genre: ${genreText}`;
-        } else if (type === 'movie') {
-          browseTitle = 'Popular Movies';
-        } else if (type === 'tv') {
-          browseTitle = 'Popular TV Series';
+        } else {
+          let typeText = 'Discover Content';
+          if (type === 'hongkong') typeText = 'Hong Kong Dramas';
+          else if (type === 'korean') typeText = 'Korean Dramas';
+          else if (type === 'movie') typeText = 'Popular Movies';
+          else if (type === 'tv') typeText = 'Popular TV Series';
+          
+          if (genre !== 'all' && genre !== 'hongkong' && genre !== 'korean') {
+            const genreText = document.getElementById('genre-select').options[document.getElementById('genre-select').selectedIndex].text;
+            browseTitle = `${typeText} (${genreText})`;
+          } else {
+            browseTitle = typeText;
+          }
+        }
+        
+        if (year !== 'all') {
+          browseTitle += ` (${year})`;
         }
         heading.textContent = browseTitle;
         
         // Fetch logic based on Search Query vs Discover Browse
         if (query) {
-          if (genre === 'hongkong') {
+          if (genre === 'hongkong' || type === 'hongkong') {
             const searchData = await fetchTMDB('/search/tv', { query, language: 'zh-HK' });
             items = (searchData.results || []).map(i => ({ ...i, media_type: 'tv' }));
           } else {
@@ -2529,6 +2582,15 @@
             // Filter by media type
             if (type === 'movie' && item.media_type !== 'movie') return false;
             if (type === 'tv' && item.media_type !== 'tv') return false;
+            if (type === 'hongkong') {
+              const isHK = item.origin_country && item.origin_country.includes('HK');
+              const isZh = item.original_language === 'zh' || item.original_language === 'cn';
+              if (!isHK && !isZh) return false;
+            }
+            if (type === 'korean') {
+              const isKR = item.origin_country && item.origin_country.includes('KR');
+              if (!isKR) return false;
+            }
             if (item.media_type !== 'movie' && item.media_type !== 'tv') return false; // exclude people/actors from card lists
             
             // Filter by genres
@@ -2536,76 +2598,98 @@
               if (genre === 'korean') {
                 return item.origin_country && item.origin_country.includes('KR');
               } else if (genre === 'hongkong') {
-                return item.origin_country && item.origin_country.includes('HK');
+                const isHK = item.origin_country && item.origin_country.includes('HK');
+                const isZh = item.original_language === 'zh' || item.original_language === 'cn';
+                return isHK || isZh;
               } else {
                 const genreId = parseInt(genre);
                 return item.genre_ids && item.genre_ids.includes(genreId);
               }
             }
+            
+            // Filter by year
+            if (year !== 'all') {
+              const releaseDate = item.release_date || item.first_air_date;
+              if (!releaseDate) return false;
+              const itemYear = new Date(releaseDate).getFullYear().toString();
+              if (itemYear !== year) return false;
+            }
             return true;
           });
         } else {
           // Empty search, load discover listings
-          if (genre === 'korean') {
-            // Custom request for Korean Dramas / Movies
-            if (type === 'movie') {
-              const res = await fetchTMDB('/discover/movie', { with_origin_country: 'KR' });
-              items = res.results.map(i => ({ ...i, media_type: 'movie' }));
-            } else if (type === 'tv') {
-              const res = await fetchTMDB('/discover/tv', { with_origin_country: 'KR' });
-              items = res.results.map(i => ({ ...i, media_type: 'tv' }));
-            } else {
-              // combine both
-              const [movRes, tvRes] = await Promise.all([
-                fetchTMDB('/discover/movie', { with_origin_country: 'KR' }),
-                fetchTMDB('/discover/tv', { with_origin_country: 'KR' })
-              ]);
-              const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
-              const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-              // Interleave results
-              items = [];
-              for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
-                if (movies[i]) items.push(movies[i]);
-                if (tvs[i]) items.push(tvs[i]);
-              }
+          const isHK = (type === 'hongkong' || genre === 'hongkong');
+          const isKR = (type === 'korean' || genre === 'korean');
+          
+          if (isHK) {
+            const movieParams = { with_origin_country: 'HK', with_original_language: 'zh' };
+            const tvParams = { with_origin_country: 'HK', with_original_language: 'zh' };
+            if (year !== 'all') {
+              movieParams.primary_release_year = year;
+              tvParams.first_air_date_year = year;
             }
-          } else if (genre === 'hongkong') {
-            // Fetch Hong Kong Dramas / Movies
-            if (type === 'movie') {
-              const res = await fetchTMDB('/discover/movie', { with_origin_country: 'HK', with_original_language: 'zh' });
-              items = res.results.map(i => ({ ...i, media_type: 'movie' }));
-            } else if (type === 'tv') {
-              const res = await fetchTMDB('/discover/tv', { with_origin_country: 'HK', with_original_language: 'zh' });
-              items = res.results.map(i => ({ ...i, media_type: 'tv' }));
-            } else {
-              // combine both
-              const [movRes, tvRes] = await Promise.all([
-                fetchTMDB('/discover/movie', { with_origin_country: 'HK', with_original_language: 'zh' }),
-                fetchTMDB('/discover/tv', { with_origin_country: 'HK', with_original_language: 'zh' })
-              ]);
-              const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
-              const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
-              items = [];
-              for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
-                if (movies[i]) items.push(movies[i]);
-                if (tvs[i]) items.push(tvs[i]);
-              }
+            if (genre !== 'all' && genre !== 'hongkong' && genre !== 'korean') {
+              const genreId = parseInt(genre);
+              movieParams.with_genres = genreId;
+              tvParams.with_genres = genreId;
+            }
+            
+            const [movRes, tvRes] = await Promise.all([
+              fetchTMDB('/discover/movie', movieParams),
+              fetchTMDB('/discover/tv', tvParams)
+            ]);
+            const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
+            const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
+            items = [];
+            for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
+              if (movies[i]) items.push(movies[i]);
+              if (tvs[i]) items.push(tvs[i]);
+            }
+          } else if (isKR) {
+            const movieParams = { with_origin_country: 'KR' };
+            const tvParams = { with_origin_country: 'KR' };
+            if (year !== 'all') {
+              movieParams.primary_release_year = year;
+              tvParams.first_air_date_year = year;
+            }
+            if (genre !== 'all' && genre !== 'hongkong' && genre !== 'korean') {
+              const genreId = parseInt(genre);
+              movieParams.with_genres = genreId;
+              tvParams.with_genres = genreId;
+            }
+            
+            const [movRes, tvRes] = await Promise.all([
+              fetchTMDB('/discover/movie', movieParams),
+              fetchTMDB('/discover/tv', tvParams)
+            ]);
+            const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
+            const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
+            items = [];
+            for (let i = 0; i < Math.max(movies.length, tvs.length); i++) {
+              if (movies[i]) items.push(movies[i]);
+              if (tvs[i]) items.push(tvs[i]);
             }
           } else if (genre !== 'all') {
             // Specific genre discovery
             const genreId = parseInt(genre);
+            const movieParams = { with_genres: genreId };
+            const tvParams = { with_genres: genreId };
+            if (year !== 'all') {
+              movieParams.primary_release_year = year;
+              tvParams.first_air_date_year = year;
+            }
+            
             if (type === 'movie') {
-              const res = await fetchTMDB('/discover/movie', { with_genres: genreId });
+              const res = await fetchTMDB('/discover/movie', movieParams);
               items = res.results.map(i => ({ ...i, media_type: 'movie' }));
             } else if (type === 'tv') {
-              // TV shows use different genre codes sometimes, TMDB handles common ones
-              const res = await fetchTMDB('/discover/tv', { with_genres: genreId });
+              const res = await fetchTMDB('/discover/tv', tvParams);
               items = res.results.map(i => ({ ...i, media_type: 'tv' }));
             } else {
               // both
               const [movRes, tvRes] = await Promise.all([
-                fetchTMDB('/discover/movie', { with_genres: genreId }),
-                fetchTMDB('/discover/tv', { with_genres: genreId })
+                fetchTMDB('/discover/movie', movieParams),
+                fetchTMDB('/discover/tv', tvParams)
               ]);
               const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
               const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
@@ -2613,15 +2697,34 @@
             }
           } else {
             // General trending/popular catalog
-            if (type === 'movie') {
-              const res = await fetchTMDB('/movie/popular');
-              items = res.results.map(i => ({ ...i, media_type: 'movie' }));
-            } else if (type === 'tv') {
-              const res = await fetchTMDB('/tv/popular');
-              items = res.results.map(i => ({ ...i, media_type: 'tv' }));
+            if (year === 'all') {
+              if (type === 'movie') {
+                const res = await fetchTMDB('/movie/popular');
+                items = res.results.map(i => ({ ...i, media_type: 'movie' }));
+              } else if (type === 'tv') {
+                const res = await fetchTMDB('/tv/popular');
+                items = res.results.map(i => ({ ...i, media_type: 'tv' }));
+              } else {
+                const res = await fetchTMDB('/trending/all/week');
+                items = res.results;
+              }
             } else {
-              const res = await fetchTMDB('/trending/all/week');
-              items = res.results;
+              // Discover for specific year
+              if (type === 'movie') {
+                const res = await fetchTMDB('/discover/movie', { primary_release_year: year });
+                items = res.results.map(i => ({ ...i, media_type: 'movie' }));
+              } else if (type === 'tv') {
+                const res = await fetchTMDB('/discover/tv', { first_air_date_year: year });
+                items = res.results.map(i => ({ ...i, media_type: 'tv' }));
+              } else {
+                const [movRes, tvRes] = await Promise.all([
+                  fetchTMDB('/discover/movie', { primary_release_year: year }),
+                  fetchTMDB('/discover/tv', { first_air_date_year: year })
+                ]);
+                const movies = movRes.results.map(i => ({ ...i, media_type: 'movie' }));
+                const tvs = tvRes.results.map(i => ({ ...i, media_type: 'tv' }));
+                items = [...movies, ...tvs].sort((a, b) => b.popularity - a.popularity);
+              }
             }
           }
         }
@@ -2633,7 +2736,7 @@
             <div class="no-results">
               <i data-lucide="film"></i>
               <h3>No Content Found</h3>
-              <p>We couldn't find any results matching your filter selections. Try typing something else.</p>
+              <p>We couldn't find any results matching your filter selections. Try selecting another year or genre.</p>
             </div>
           `;
         } else {
