@@ -3036,22 +3036,20 @@
         genreSelect.innerHTML = genreOptions;
       }
 
-      // 3. Year select
+      // 3. Year select (dynamically generated so it always includes the current year)
       const yearSelect = document.getElementById('year-select');
       if (yearSelect) {
-        const yearsList = [
-          { code: '2025', name: '2025' },
-          { code: '2024', name: '2024' },
-          { code: '2023', name: '2023' },
-          { code: '2022', name: '2022' },
-          { code: '2021', name: '2021' },
-          { code: '2020', name: '2020' },
-          { code: '2019', name: '2019' },
-          { code: '2018', name: '2018' },
-          { code: '2010-2017', name: '2010-2017' },
-          { code: '2000-2009', name: '2000-2009' },
-          { code: 'before_2000', name: 'Before 2000' }
-        ];
+        const currentYear = new Date().getFullYear();
+        const yearsList = [];
+        // Individual years from current year down to 2018
+        for (let y = currentYear; y >= 2018; y--) {
+          yearsList.push({ code: String(y), name: String(y) });
+        }
+        // Decade buckets for older content
+        yearsList.push({ code: '2010-2017', name: '2010–2017' });
+        yearsList.push({ code: '2000-2009', name: '2000–2009' });
+        yearsList.push({ code: 'before_2000', name: 'Before 2000' });
+
         let yearOptions = '<option value="all">Any Year</option>';
         yearsList.forEach(y => {
           yearOptions += `<option value="${y.code}">${y.name}</option>`;
