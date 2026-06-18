@@ -1670,6 +1670,57 @@
       </div>
     </section>
 
+    <!-- ==========================================
+         PAGE 3: TERMS & CONDITIONS PAGE
+         ========================================== -->
+    <section id="terms-page" class="page" tabindex="-1">
+      <div style="max-width: 800px; margin: 2rem auto 4rem auto; background: rgba(15, 12, 41, 0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); padding: 3rem; border-radius: var(--border-radius-lg); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);">
+        
+        <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; border: 1px solid rgba(99, 102, 241, 0.3);">
+          <i data-lucide="file-text" style="color: var(--accent); width: 28px; height: 28px;"></i>
+        </div>
+        
+        <h1 style="font-family: var(--font-display); font-weight: 400; font-size: 2.5rem; margin-bottom: 0.5rem; background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Terms & Conditions</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Last updated: June 2026</p>
+        
+        <div class="terms-content" style="color: var(--text-muted); line-height: 1.7; font-size: 0.95rem; display: flex; flex-direction: column; gap: 1.5rem;">
+          
+          <div>
+            <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem; font-weight: 700;">1. Personal Use Only</h3>
+            <p>JV Movie is a streaming aggregator designed strictly for private, non-commercial, and personal entertainment purposes. By accessing the site, you agree to use the services solely for individual viewing and not for public broadcasting or redistribution.</p>
+          </div>
+          
+          <div>
+            <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem; font-weight: 700;">2. Third-Party Content Disclaimer</h3>
+            <p>All catalog metadata, posters, backdrops, and descriptions are retrieved dynamically in real-time from The Movie Database (TMDB) API. The video streaming players embedded on this platform are hosted on external, third-party servers (e.g., 2embed). JV Movie does not store, host, or upload any video media files on its own hosting system.</p>
+          </div>
+          
+          <div>
+            <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem; font-weight: 700;">3. Ad-Blocking Recommendation</h3>
+            <p>Since video stream servers are managed by third parties, they may serve advertisements, pop-ups, or redirects. Users are strongly advised to utilize a browser with native ad-blocking (such as Brave Browser or Opera GX) or install a verified adblocker extension to ensure a premium, clean experience.</p>
+          </div>
+          
+          <div>
+            <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem; font-weight: 700;">4. API and Access Credentials</h3>
+            <p>Access to TMDB API configurations is password-protected and reserved for system administration. Unauthorized attempts to modify database links, bypass verification prompts, or inspect local storage properties without credentials may result in session invalidation.</p>
+          </div>
+          
+          <div>
+            <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem; font-weight: 700;">5. Revisions and Modifications</h3>
+            <p>We reserve the right to revise these terms or update platform behaviors at any time without prior notice. Continued use of the website following changes constitutes acceptance of the modified Terms & Conditions.</p>
+          </div>
+
+        </div>
+        
+        <div style="margin-top: 2.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <a href="#home" class="btn btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i> Return Home
+          </a>
+        </div>
+        
+      </div>
+    </section>
+
   </main>
 
   <!-- ==========================================
@@ -1686,6 +1737,7 @@
         <li><a href="#browse?type=movie">Movies</a></li>
         <li><a href="#browse?type=tv">TV Series</a></li>
         <li><a href="#browse">Browse All</a></li>
+        <li><a href="#terms">Terms & Conditions</a></li>
       </ul>
       <p>© 2026 JV Movie. All rights reserved. Data sourced via TMDB API. Video streams provided by third-party embed servers.</p>
     </div>
@@ -1716,6 +1768,48 @@
         <button class="btn btn-secondary" onclick="closeApiKeyModal()" style="padding: 0.6rem 1rem; font-size: 0.85rem; flex-grow: 1;">Cancel</button>
         <button class="btn btn-primary" onclick="saveApiKey()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; flex-grow: 1;">Save Changes</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       ADBLOCKER RECOMMENDATION MODAL
+       ========================================== -->
+  <div id="adblocker-modal" class="modal-overlay">
+    <div class="modal-box" style="border-color: rgba(34, 197, 94, 0.4); box-shadow: 0 0 50px rgba(34, 197, 94, 0.2); max-width: 500px; text-align: center;">
+      <button class="modal-close" onclick="closeAdblockerModal()"><i data-lucide="x"></i></button>
+      
+      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; border: 1px solid rgba(34, 197, 94, 0.3);">
+        <i data-lucide="shield-alert" style="color: #22c55e; width: 26px; height: 26px;"></i>
+      </div>
+      
+      <h2 style="font-family: var(--font-display); font-weight: 400; font-size: 1.8rem; margin-bottom: 0.75rem; letter-spacing: -0.5px;">Ad-Blocker Recommended</h2>
+      
+      <p class="modal-desc" style="margin-bottom: 1.5rem; line-height: 1.6; text-align: left;">
+        This platform is for personal use only. Video streams are loaded from third-party servers which may display advertisements, redirects, or pop-ups. To ensure a premium, ad-free viewing experience, we highly recommend:
+      </p>
+      
+      <!-- Desktop Recommendation -->
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.25rem; border-radius: var(--border-radius-md); text-align: left; margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 1rem;">
+        <i data-lucide="monitor" style="color: #6366f1; width: 24px; height: 24px; flex-shrink: 0; margin-top: 2px;"></i>
+        <div>
+          <h4 style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem;">Web / Desktop Users</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4;">Install an ad-blocker extension in your browser to block video ads completely.</p>
+          <a href="https://getadblock.com/en/" target="_blank" class="btn btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.8rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; color: #fff;">
+            Get AdBlock <i data-lucide="external-link" style="width: 12px; height: 12px;"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Mobile Recommendation -->
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.25rem; border-radius: var(--border-radius-md); text-align: left; margin-bottom: 1.75rem; display: flex; align-items: flex-start; gap: 1rem;">
+        <i data-lucide="smartphone" style="color: #22c55e; width: 24px; height: 24px; flex-shrink: 0; margin-top: 2px;"></i>
+        <div>
+          <h4 style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem;">Mobile / Phone Users</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">Use browsers with native ad-blocking built-in, such as <strong>Brave Browser</strong> or <strong>Opera GX</strong>, available on the App Store / Play Store.</p>
+        </div>
+      </div>
+      
+      <button class="btn btn-primary" onclick="closeAdblockerModal()" style="width: 100%; padding: 0.9rem;">Continue to JV Movie</button>
     </div>
   </div>
 
@@ -1774,6 +1868,9 @@
       // Setup SPA Hash routing
       window.addEventListener('hashchange', handleRoute);
       handleRoute();
+      
+      // Auto-open adblocker notice on page load
+      openAdblockerModal();
     });
 
     // Hash routing logic
@@ -1800,6 +1897,8 @@
         syncBrowseUI();
         
         switchPage('browse-page', () => loadBrowsePage());
+      } else if (route === 'terms') {
+        switchPage('terms-page');
       } else {
         // Fallback to home
         switchPage('home-page', () => loadHomePage());
@@ -1993,6 +2092,16 @@
     function closeApiKeyModal() {
       document.getElementById('api-key-modal').classList.remove('active');
       localStorage.removeItem('JV_MOVIE_AUTHORIZED');
+    }
+
+    function openAdblockerModal() {
+      const modal = document.getElementById('adblocker-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAdblockerModal() {
+      const modal = document.getElementById('adblocker-modal');
+      if (modal) modal.classList.remove('active');
     }
 
     function saveApiKey() {
