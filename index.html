@@ -1593,14 +1593,14 @@
   <!-- ==========================================
        SITE PASSWORD PROTECTION OVERLAY
        ========================================== -->
-  <div id="password-protection-screen" class="password-overlay hidden">
+  <div id="password-protection-screen" class="password-overlay">
     <div class="modal-box" style="text-align: center; border-color: rgba(124, 58, 237, 0.4); box-shadow: 0 0 50px rgba(124, 58, 237, 0.3);">
-      <button class="modal-close" onclick="closePasswordScreen()"><i data-lucide="x"></i></button>
+      <button id="password-close-btn" class="modal-close" style="display: none;" onclick="closePasswordScreen()"><i data-lucide="x"></i></button>
       <div style="background: var(--accent-gradient); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);">
         <i data-lucide="lock" style="color: white; width: 26px; height: 26px;"></i>
       </div>
-      <h2 id="password-overlay-title" style="font-weight: 850; font-size: 1.6rem; margin-bottom: 0.75rem; letter-spacing: -0.5px;">API Settings Lock</h2>
-      <p id="password-overlay-desc" class="modal-desc" style="margin-bottom: 1.5rem;">Access to TMDB API Settings is restricted. Please enter the credentials password to view or modify API configurations.</p>
+      <h2 id="password-overlay-title" style="font-weight: 850; font-size: 1.6rem; margin-bottom: 0.75rem; letter-spacing: -0.5px;">Website Updating</h2>
+      <p id="password-overlay-desc" class="modal-desc" style="margin-bottom: 1.5rem;">Currently this website is being updating, will return soon.<br>If you want to proceed, please enter the access password.</p>
       
       <div class="modal-input-group" style="text-align: left;">
         <label for="site-password-input" class="modal-label">Credentials Password</label>
@@ -1619,7 +1619,13 @@
     </div>
   </div>
 
-  <div id="site-main-wrapper" style="display: flex; flex-direction: column; min-height: 100vh;">
+  <div id="site-main-wrapper" class="blurred-content" style="display: flex; flex-direction: column; min-height: 100vh;">
+    <script>
+      if (localStorage.getItem('JV_SITE_ACCESS_GRANTED') === 'true') {
+        document.getElementById('site-main-wrapper').classList.remove('blurred-content');
+        document.getElementById('password-protection-screen').classList.add('hidden');
+      }
+    </script>
 
   <!-- ==========================================
        NAVBAR / HEADER
@@ -2564,8 +2570,28 @@
     // ==========================================
     
     function initPasswordCheck() {
-      // Clear authorization on load so access is always locked on start
+      // Clear authorization on load so access to API settings is always locked on start
       localStorage.removeItem('JV_MOVIE_AUTHORIZED');
+
+      const isSiteUnlocked = localStorage.getItem('JV_SITE_ACCESS_GRANTED') === 'true';
+      const screen = document.getElementById('password-protection-screen');
+      const wrapper = document.getElementById('site-main-wrapper');
+      const closeBtn = document.getElementById('password-close-btn');
+
+      if (isSiteUnlocked) {
+        if (screen) screen.classList.add('hidden');
+        if (wrapper) wrapper.classList.remove('blurred-content');
+      } else {
+        if (screen) screen.classList.remove('hidden');
+        if (wrapper) wrapper.classList.add('blurred-content');
+        if (closeBtn) closeBtn.style.display = 'none';
+        
+        // Auto focus input after DOM settles
+        setTimeout(() => {
+          const input = document.getElementById('site-password-input');
+          if (input) input.focus();
+        }, 300);
+      }
 
       // Setup toggling visibilities
       const passInput = document.getElementById('site-password-input');
@@ -2609,11 +2635,18 @@
       const errorMsg = document.getElementById('password-error-message');
       
       if (password === 'Chen@12345678') {
+        localStorage.setItem('JV_SITE_ACCESS_GRANTED', 'true');
         localStorage.setItem('JV_MOVIE_AUTHORIZED', 'true');
-        const screen = document.getElementById('password-protection-screen');
         
-        // Hide password screen
-        screen.classList.add('hidden');
+        const screen = document.getElementById('password-protection-screen');
+        const wrapper = document.getElementById('site-main-wrapper');
+        const closeBtn = document.getElementById('password-close-btn');
+        
+        // Hide password screen and unblur wrapper
+        if (screen) screen.classList.add('hidden');
+        if (wrapper) wrapper.classList.remove('blurred-content');
+        if (closeBtn) closeBtn.style.display = 'flex';
+        
         errorMsg.style.display = 'none';
         document.getElementById('site-password-input').value = '';
         
@@ -2640,7 +2673,11 @@
       document.getElementById('password-overlay-desc').textContent = desc;
       state._pendingPasswordCb = onSuccess;
       const screen = document.getElementById('password-protection-screen');
-      screen.classList.remove('hidden');
+      if (screen) screen.classList.remove('hidden');
+      
+      const closeBtn = document.getElementById('password-close-btn');
+      if (closeBtn) closeBtn.style.display = 'flex';
+      
       setTimeout(() => {
         document.getElementById('site-password-input').focus();
       }, 100);
