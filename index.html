@@ -284,6 +284,14 @@
     .card:hover .card-poster img { transform: scale(1.04); }
     .card:focus-visible { outline: none; }
 
+    .age-badge {
+      position: absolute; top: 8px; left: 8px; z-index: 5;
+      padding: 0.15rem 0.45rem; border-radius: 4px; background: #D93A2B; color: #fff;
+      font-family: var(--font-display); font-weight: 900; font-size: 0.95rem; letter-spacing: 0.02em; line-height: 1.2;
+    }
+    .age-rating { padding: 0.15rem 0.55rem !important; border: 1px solid var(--line-strong) !important; border-radius: 4px !important; font-size: 0.82rem; font-weight: 600; }
+    .age-rating.is-adult { background: #D93A2B !important; border-color: #D93A2B !important; color: #fff; }
+
     .card-overlay {
       position: absolute; inset: 0; z-index: 2; background: rgba(13, 13, 11, 0.35);
       display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s ease;
@@ -353,6 +361,11 @@
     }
     .search-input::placeholder { color: var(--text-dark); }
     .search-input:focus { outline: none; border-color: var(--accent); }
+    .search-input::-webkit-search-cancel-button {
+      -webkit-appearance: none; width: 20px; height: 20px; cursor: pointer; background-color: var(--text-muted);
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+    .search-input::-webkit-search-cancel-button:hover { background-color: var(--accent); }
     .search-bar-wrapper svg, .search-bar-wrapper i {
       position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%);
       width: 22px; height: 22px; color: var(--text-muted); pointer-events: none;
@@ -387,7 +400,8 @@
       width: 16px; height: 16px; pointer-events: none; color: var(--text-muted);
     }
 
-    .search-filter-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; width: 100%; }
+    .search-filter-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.75rem; width: 100%; }
+    @media (max-width: 1100px) { .search-filter-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 768px) { .search-filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 480px) { .search-filter-grid { grid-template-columns: 1fr; } }
 
@@ -793,6 +807,15 @@
                 </select>
                 <i data-lucide="chevron-down"></i>
               </div>
+
+              <div class="select-dropdown-wrapper">
+                <select id="age-select" class="select-dropdown" style="width: 100%;" aria-label="Age rating">
+                  <option value="all">All ages</option>
+                  <option value="adult">18+ only</option>
+                  <option value="noadult">Hide 18+</option>
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
             </div>
           </div>
         </div>
@@ -886,6 +909,7 @@
                   <span id="watch-rating" class="rating-badge"><i data-lucide="star"></i> 8.5</span>
                   <span id="watch-year">2026</span>
                   <span id="watch-duration">120 min</span>
+                  <span id="watch-age-badge" class="age-rating" hidden></span>
                   <span id="watch-type-badge" class="genre-tag" style="background-color: var(--accent); color: white; border: none; font-size: 0.75rem;">MOVIE</span>
                   <span id="watch-country-badge" style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; font-weight: 700; color: #fff;"></span>
                 </div>
@@ -954,6 +978,14 @@
             
             <!-- Year + sort selectors -->
             <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+              <div class="select-dropdown-wrapper">
+                <select id="country-age-select" class="select-dropdown" aria-label="Age rating">
+                  <option value="all">All ages</option>
+                  <option value="adult">18+ only</option>
+                  <option value="noadult">Hide 18+</option>
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
               <div class="select-dropdown-wrapper">
                 <select id="country-year-select" class="select-dropdown" aria-label="Year">
                   <option value="all">Any year</option>
@@ -1275,7 +1307,8 @@
         year: 'all',  // all, or year range/specific year
         query: '',
         country: 'all',
-        language: 'all'
+        language: 'all',
+        age: 'all' // all | adult (18+ only) | noadult (hide 18+)
       },
       watchData: {
         id: null,
@@ -1289,6 +1322,7 @@
         sort: 'popularity.desc',
         genre: 'all',
         year: 'all',
+        age: 'all',
         page: 1
       },
       _pendingPasswordCb: null,
@@ -1369,6 +1403,7 @@
         state.browseFilters.query = params.get('q') || '';
         state.browseFilters.country = params.get('country') || 'all';
         state.browseFilters.language = params.get('lang') || 'all';
+        state.browseFilters.age = params.get('age') || 'all';
         
         // Update filter inputs UI to match route params
         syncBrowseUI();
@@ -1381,6 +1416,7 @@
         state.countryPage.sort = params.get('sort') || 'popularity.desc';
         state.countryPage.genre = params.get('genre') || 'all';
         state.countryPage.year = params.get('year') || 'all';
+        state.countryPage.age = params.get('age') || 'all';
         state.countryPage.page = parseInt(params.get('page')) || 1;
         
         switchPage('country-page', () => loadCountryPage());
@@ -1441,14 +1477,19 @@
       };
 
       // Check browser support for View Transitions API (Baseline Newly Available)
-      if (!document.startViewTransition) {
+      // Move focus to the new page, but never pull it out of a control the user is using on that page (e.g. live search)
+      const focusPage = () => {
+        const page = document.getElementById(pageId);
+        if (page && !page.contains(document.activeElement)) page.focus();
+      };
+      const samePage = document.getElementById(pageId)?.classList.contains('active');
+
+      if (!document.startViewTransition || samePage) {
         updateDOM();
-        document.getElementById(pageId)?.focus();
+        focusPage();
       } else {
         const transition = document.startViewTransition(() => updateDOM());
-        transition.finished.finally(() => {
-          document.getElementById(pageId)?.focus();
-        });
+        transition.finished.finally(focusPage);
       }
     }
 
@@ -1752,6 +1793,11 @@
       const yearSelect = document.getElementById('country-year-select');
       const thisYear = new Date().getFullYear();
       for (let y = thisYear; y >= 1960; y--) yearSelect.add(new Option(y, y));
+      document.getElementById('country-age-select').addEventListener('change', (e) => {
+        state.countryPage.age = e.target.value;
+        state.countryPage.page = 1;
+        updateCountryUrl();
+      });
       yearSelect.addEventListener('change', (e) => {
         state.countryPage.year = e.target.value;
         state.countryPage.page = 1;
@@ -1783,13 +1829,14 @@
     }
 
     function updateCountryUrl() {
-      const { code, tab, sort, genre, year, page } = state.countryPage;
+      const { code, tab, sort, genre, year, age, page } = state.countryPage;
       const params = new URLSearchParams();
       params.append('code', code);
       if (tab !== 'movie') params.append('tab', tab);
       if (sort !== 'popularity.desc') params.append('sort', sort);
       if (genre !== 'all') params.append('genre', genre);
       if (year !== 'all') params.append('year', year);
+      if (age !== 'all') params.append('age', age);
       if (page > 1) params.append('page', page);
       window.location.hash = `#country?${params.toString()}`;
     }
@@ -1797,7 +1844,7 @@
     async function loadCountryPage() {
       if (!state.apiKey) return;
       
-      const { code, tab, sort, genre, year, page } = state.countryPage;
+      const { code, tab, sort, genre, year, age, page } = state.countryPage;
       const grid = document.getElementById('country-grid');
       const loadMoreBtn = document.getElementById('country-load-more-btn');
       
@@ -1820,6 +1867,7 @@
       });
       document.getElementById('country-sort-select').value = sort;
       document.getElementById('country-year-select').value = year;
+      document.getElementById('country-age-select').value = age;
       document.querySelectorAll('#country-genre-chips .filter-pill').forEach(chip => {
         if (chip.getAttribute('data-genre') === genre) chip.classList.add('active');
         else chip.classList.remove('active');
@@ -1864,6 +1912,8 @@
         // keep unreleased titles out of "newest first"
         params[isMovie ? 'primary_release_date.lte' : 'first_air_date.lte'] = new Date().toISOString().slice(0, 10);
 
+        Object.assign(params, await ageParams(isMovie ? 'movie' : 'tv', code, age));
+
         const endpoint = isMovie ? '/discover/movie' : '/discover/tv';
         const res = await fetchTMDB(endpoint, params);
         
@@ -1876,7 +1926,7 @@
         
         if (res && res.results && res.results.length > 0) {
           
-          const cardsHtml = res.results.map(item => renderMovieCard({ ...item, media_type: tab })).join('');
+          const cardsHtml = res.results.map(item => renderMovieCard({ ...item, media_type: tab, is18: age === 'adult' })).join('');
           grid.insertAdjacentHTML('beforeend', cardsHtml);
           
           if (res.page < res.total_pages) {
@@ -1985,6 +2035,45 @@
           showError('Failed to retrieve homepage collections. Verify your network or API status.');
         }
       }
+    }
+
+    // Ratings that mean 18+ per country, from TMDB /certification/{movie,tv}/list.
+    // US TV has no 18 rating; TV-MA (17+) is the closest.
+    const ADULT_CERTS = {
+      movie: { MY: '18SG|18SX|18PA|18PL', KR: '19|Restricted Screening', JP: 'R18+', TW: '18+', HK: 'III', TH: '18|20', PH: 'R-18|X', ID: '21+', IN: 'A|S', US: 'NC-17', GB: '18|R18', FR: '18', DE: '18', ES: '18|X', IT: '18+', TR: '18+', BR: '18', MX: 'C|D', AU: 'R 18+|X 18+', CA: '18A|R|A', RU: '18+', NL: '18' },
+      tv: { MY: '18', KR: '19', TW: '18+', TH: 'น 18+|ฉ 20-', PH: 'X', ID: 'D', IN: 'A', US: 'TV-MA', GB: '18|R18', FR: '18', DE: '18', ES: '18', IT: 'VM18', TR: '18+', BR: '18', MX: 'C|D', AU: 'R 18+', CA: '18+', RU: '18+', NL: '18' }
+    };
+
+    function isAdultCert(type, country, cert) {
+      return !!cert && (ADULT_CERTS[type][country] || '').split('|').includes(cert);
+    }
+
+    // Discover params for the age filter. Countries without a rating system (CN, SA…) use US ratings.
+    // "Hide 18+" lists only titles rated below 18 there, so unrated titles drop out.
+    async function ageParams(type, country, age) {
+      if (age === 'all') return {};
+      const cc = ADULT_CERTS[type][country] ? country : 'US';
+      const adult = ADULT_CERTS[type][cc];
+      if (age === 'adult') return { certification_country: cc, certification: adult };
+      const list = await fetchTMDB(`/certification/${type}/list`);
+      const safe = (list.certifications[cc] || []).map(c => c.certification).filter(c => c && !adult.split('|').includes(c));
+      return { certification_country: cc, certification: safe.join('|') };
+    }
+
+    // Best available age rating: Malaysia first, then the title's own country, then US
+    async function getAgeRating(type, id, origin) {
+      const res = await fetchTMDB(type === 'movie' ? `/movie/${id}/release_dates` : `/tv/${id}/content_ratings`);
+      const pick = (cc) => {
+        const r = (res.results || []).find(x => x.iso_3166_1 === cc);
+        if (!r) return '';
+        return type === 'movie' ? ((r.release_dates || []).find(d => d.certification) || {}).certification || '' : r.rating || '';
+      };
+      for (const cc of ['MY', origin, 'US']) {
+        if (!cc) continue;
+        const cert = pick(cc);
+        if (cert) return { country: cc, cert, adult: isAdultCert(type, cc, cert) };
+      }
+      return null;
     }
 
     function renderProgramme(items) {
@@ -2099,6 +2188,7 @@
       return `
         <a href="#watch?id=${item.id}&type=${type}" class="card" data-id="${item.id}" data-type="${type}">
           <div class="card-poster">
+            ${item.adult || item.is18 ? '<span class="age-badge" title="18+ content">18+</span>' : ''}
             ${getCardCountryBadge(item)}
             <img class="lazy-image" data-src="${getPosterUrl(item.poster_path)}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2 3'%3E%3C/svg%3E" alt="${title}">
             <div class="card-overlay">
@@ -2245,6 +2335,11 @@
         state.browseFilters.language = e.target.value;
         updateBrowseUrl();
       });
+
+      document.getElementById('age-select').addEventListener('change', (e) => {
+        state.browseFilters.age = e.target.value;
+        updateBrowseUrl();
+      });
       
       typePills.forEach(pill => {
         pill.addEventListener('click', () => {
@@ -2259,7 +2354,7 @@
 
     // Push states to URL hash to keep links bookmarkable
     function updateBrowseUrl() {
-      const { type, genre, year, query, country, language } = state.browseFilters;
+      const { type, genre, year, query, country, language, age } = state.browseFilters;
       const params = new URLSearchParams();
       
       if (type !== 'all') params.append('type', type);
@@ -2268,6 +2363,7 @@
       if (query) params.append('q', query);
       if (country !== 'all') params.append('country', country);
       if (language !== 'all') params.append('lang', language);
+      if (age !== 'all') params.append('age', age);
       
       const queryString = params.toString();
       window.location.hash = `#browse${queryString ? '?' + queryString : ''}`;
@@ -2280,11 +2376,14 @@
         populateBrowseSelectors();
       }
 
-      document.getElementById('search-input').value = state.browseFilters.query || '';
+      const searchInput = document.getElementById('search-input');
+      // Don't overwrite what the user is still typing
+      if (document.activeElement !== searchInput) searchInput.value = state.browseFilters.query || '';
       document.getElementById('country-select').value = state.browseFilters.country || 'all';
       document.getElementById('genre-select').value = state.browseFilters.genre || 'all';
       document.getElementById('year-select').value = state.browseFilters.year || 'all';
       document.getElementById('language-select').value = state.browseFilters.language || 'all';
+      document.getElementById('age-select').value = state.browseFilters.age || 'all';
       
       const typePills = document.querySelectorAll('#type-filter-pills .filter-pill');
       typePills.forEach(pill => {
@@ -2315,7 +2414,7 @@
       
       try {
         dismissError();
-        const { type, genre, year, query, country, language } = state.browseFilters;
+        const { type, genre, year, query, country, language, age } = state.browseFilters;
         let items = [];
         
         // Custom heading description
@@ -2405,6 +2504,15 @@
 
             return true;
           });
+
+          // Search results carry no age rating: look each one up (cached) only when the filter is on
+          if (age !== 'all') {
+            const rated = await Promise.all(items.map(async (item) => {
+              const r = await getAgeRating(item.media_type, item.id, getCountryCode(item)).catch(() => null);
+              return { ...item, is18: item.adult || !!(r && r.adult) };
+            }));
+            items = rated.filter(item => age === 'adult' ? item.is18 : !item.is18);
+          }
         } else {
           // Empty search query, load discover listings
           const movieParams = {
@@ -2458,6 +2566,11 @@
             tvParams.with_original_language = finalLang;
           }
           
+          // 5. Age rating filter
+          const ageCountry = finalCountry !== 'all' ? finalCountry : 'US';
+          Object.assign(movieParams, await ageParams('movie', ageCountry, age));
+          Object.assign(tvParams, await ageParams('tv', ageCountry, age));
+
           const getDate = item => item.release_date || item.first_air_date || '1900-01-01';
           const sortByNewest = arr => arr.sort((a, b) => getDate(b).localeCompare(getDate(a)));
           
@@ -2477,6 +2590,7 @@
             const tvs = (tvRes.results || []).map(i => ({ ...i, media_type: 'tv' }));
             items = sortByNewest([...movies, ...tvs]);
           }
+          if (age === 'adult') items = items.map(i => ({ ...i, is18: true }));
         }
         
         // Render results grid
@@ -2551,6 +2665,7 @@
         genresBox.innerHTML = details.genres.map(g => `<span class="genre-tag">${g.name}</span>`).join('');
         
         loadWatchProviders(id, type);
+        loadAgeBadge(id, type, details);
 
         // Country / Language Badge
         const countryBadge = document.getElementById('watch-country-badge');
@@ -2720,6 +2835,20 @@
       const targetSeason = isHK ? 1 : season;
       // Navigate to watch route with updated parameters
       window.location.hash = `#watch?id=${tvId}&type=tv&s=${targetSeason}&e=${episode}`;
+    }
+
+    async function loadAgeBadge(id, type, details) {
+      const badge = document.getElementById('watch-age-badge');
+      badge.hidden = true;
+      badge.classList.remove('is-adult');
+      const r = await getAgeRating(type, id, getCountryCode(details)).catch(() => null);
+      if (state.watchData.id != id) return; // navigated away meanwhile
+      const adult = details.adult || (r && r.adult);
+      if (!r && !adult) return;
+      badge.textContent = adult ? `18+${r ? ` · ${r.country} ${r.cert}` : ''}` : `${r.country} ${r.cert}`;
+      badge.title = r ? `Rated ${r.cert} in ${countryNames[r.country] || r.country}` : 'Marked adult on TMDB';
+      badge.classList.toggle('is-adult', !!adult);
+      badge.hidden = false;
     }
 
     const PROVIDER_REGION = 'MY';
