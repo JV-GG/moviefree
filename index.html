@@ -42,7 +42,7 @@
       --border-radius-sm: 6px;
       --border-radius-md: 8px;
       --border-radius-lg: 12px;
-      --max-width: 1360px;
+      --max-width: none;
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
       --font-mono: var(--font-sans);
@@ -78,7 +78,7 @@
     /* ==========================================
        2. LAYOUT
        ========================================== */
-    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 2rem; width: 100%; }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 clamp(1rem, 2.5vw, 2.5rem); width: 100%; }
     @media (max-width: 768px) { .container { padding: 0 1rem; } }
 
     .glass { background: var(--bg-color); border: 0; }
@@ -262,6 +262,7 @@
       text-decoration: none; color: inherit; position: relative; cursor: pointer;
       background: none; border: 0;
     }
+    @media (min-width: 1800px) { .card { flex: 0 0 calc(11.11% - 1.12rem); } }
     @media (max-width: 1200px) { .card { flex: 0 0 calc(20% - 1rem); } }
     @media (max-width: 900px) { .card { flex: 0 0 calc(25% - 0.95rem); } }
     @media (max-width: 600px) { .card { flex: 0 0 calc(40% - 0.65rem); min-width: 130px; } }
@@ -315,6 +316,23 @@
     }
     .country-tile:hover { border-color: var(--accent); }
     .country-tile b { width: 2rem; font-family: var(--font-display); font-weight: 900; font-size: 1.4rem; color: var(--accent); }
+
+    .tv-tile { height: 72px; }
+    .tv-tile span { display: flex; flex-direction: column; line-height: 1.3; }
+    .tv-tile small, .provider small { color: var(--text-muted); font-size: 0.78rem; font-weight: 400; }
+    .tv-tile b { width: 3rem; }
+
+    .providers .eyebrow { margin-bottom: 0.75rem; }
+    .provider-list { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .provider {
+      display: flex; align-items: center; gap: 0.75rem; min-height: 56px; padding: 0.5rem 1rem 0.5rem 0.5rem;
+      border: 1px solid var(--line); border-radius: var(--border-radius-md); background: var(--surface);
+      color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    }
+    .provider:hover { border-color: var(--accent); }
+    .provider img { width: 40px; height: 40px; border-radius: 6px; }
+    .provider span { display: flex; flex-direction: column; line-height: 1.3; }
+    .provider-credit { margin-top: 0.6rem; color: var(--text-dark); font-size: 0.78rem; }
 
     /* ==========================================
        6. BROWSE
@@ -472,15 +490,10 @@
     .country-head h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(3rem, 7vw, 5.5rem); line-height: 0.9; text-transform: uppercase; }
     .country-head p.desc { color: var(--text-soft); margin-top: 0.75rem; max-width: 560px; }
 
-    .country-strip { display: flex; gap: 0.5rem; overflow-x: auto; padding: 1.25rem 0 0.5rem; scrollbar-width: none; }
-    .country-strip::-webkit-scrollbar { display: none; }
-    .country-chip {
-      flex: none; height: 44px; padding: 0 1rem; display: inline-flex; align-items: center; gap: 0.5rem;
-      border: 1px solid var(--line); border-radius: 22px; color: var(--text-soft); text-decoration: none; font-size: 0.9rem;
-    }
-    .country-chip b { font-family: var(--font-display); font-weight: 900; font-size: 1.05rem; }
-    .country-chip:hover { border-color: var(--line-strong); color: var(--text-main); }
-    .country-chip.active { border-color: var(--accent); color: var(--accent); }
+    .country-picker { flex: 0 1 260px; min-width: 200px; }
+    .country-picker .select-dropdown { width: 100%; height: 48px; font-size: 0.95rem; }
+    .country-head .country-flag { font-size: 0.55em; vertical-align: 0.35em; }
+    .country-tile .country-flag { font-size: 1.15rem; line-height: 1; }
 
     /* ==========================================
        9. SKELETONS
@@ -721,6 +734,13 @@
 
       <div class="row-header"><h2 class="row-title">Screen by country</h2></div>
       <nav class="country-tiles" id="home-country-tiles" aria-label="Browse by country"></nav>
+
+      <div class="row-header"><h2 class="row-title">Malaysian TV</h2></div>
+      <nav class="country-tiles" aria-label="Malaysian TV services">
+        <a class="country-tile tv-tile" href="https://rtmklik.rtm.gov.my" target="_blank" rel="noopener"><b>RTM</b><span>RTM Klik<small>Free · TV1, TV2 &amp; more</small></span></a>
+        <a class="country-tile tv-tile" href="https://www.tonton.com.my" target="_blank" rel="noopener"><b>MP</b><span>Tonton<small>Free · Media Prima channels</small></span></a>
+        <a class="country-tile tv-tile" href="https://astrogo.astro.com.my" target="_blank" rel="noopener"><b>AG</b><span>Astro GO<small>Subscription</small></span></a>
+      </nav>
     </section>
 
     <!-- ==========================================
@@ -872,6 +892,8 @@
               </div>
             </div>
             
+            <div class="providers" id="watch-providers" hidden></div>
+
             <div class="genre-tag-list" id="watch-genres">
               <!-- Injected Genres -->
             </div>
@@ -908,11 +930,17 @@
         <span class="country-code" id="country-hero-flag" aria-hidden="true">MY</span>
         <div class="country-head-text">
           <p class="eyebrow">Screen by country</p>
-          <h1 id="country-hero-title"><span id="country-hero-name">Malaysia</span></h1>
+          <h1 id="country-hero-title"><span id="country-hero-name">Malaysia</span> <span class="country-flag" id="country-hero-emoji" aria-hidden="true"></span></h1>
           <p class="desc" id="country-hero-desc">Explore movies and dramas from Malaysia.</p>
         </div>
+        <div class="country-picker">
+          <label for="country-switch" class="modal-label">Change country</label>
+          <div class="select-dropdown-wrapper">
+            <select id="country-switch" class="select-dropdown"></select>
+            <i data-lucide="chevron-down"></i>
+          </div>
+        </div>
       </div>
-      <nav class="country-strip" id="country-strip" aria-label="Other countries"></nav>
 
       <div class="browse-container" style="padding-top: 1.5rem;">
         <!-- Tabs & Sorting Grid -->
@@ -924,15 +952,23 @@
               <button class="filter-pill" data-tab="tv">TV Series</button>
             </div>
             
-            <!-- Sort dropdown/selectors -->
-            <div class="select-dropdown-wrapper">
-              <select id="country-sort-select" class="select-dropdown">
-                <option value="popularity.desc">Popular</option>
-                <option value="vote_average.desc">Top Rated</option>
-                <option value="primary_release_date.desc">Latest</option>
-                <option value="primary_release_date.asc">Oldest</option>
-              </select>
-              <i data-lucide="chevron-down"></i>
+            <!-- Year + sort selectors -->
+            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+              <div class="select-dropdown-wrapper">
+                <select id="country-year-select" class="select-dropdown" aria-label="Year">
+                  <option value="all">Any year</option>
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
+              <div class="select-dropdown-wrapper">
+                <select id="country-sort-select" class="select-dropdown" aria-label="Sort by">
+                  <option value="popularity.desc">Most popular</option>
+                  <option value="vote_average.desc">Top rated</option>
+                  <option value="primary_release_date.desc">Year: newest first</option>
+                  <option value="primary_release_date.asc">Year: oldest first</option>
+                </select>
+                <i data-lucide="chevron-down"></i>
+              </div>
             </div>
           </div>
 
@@ -1169,14 +1205,14 @@
     const TMDB_API_KEY = '479fa3d11019728110fb842a8ce17cd9'; 
 
     const countryNames = {
-      MY: "Malaysia", KR: "Korea", JP: "Japan", CN: "China", TW: "Taiwan",
+      MY: "Malaysia", KR: "Korea", JP: "Japan", CN: "China", TW: "Taiwan", HK: "Hong Kong",
       TH: "Thailand", PH: "Philippines", ID: "Indonesia", IN: "India", US: "USA", GB: "UK",
       FR: "France", DE: "Germany", ES: "Spain", IT: "Italy", TR: "Turkey", SA: "Saudi Arabia",
       BR: "Brazil", MX: "Mexico", AU: "Australia", CA: "Canada", RU: "Russia", NL: "Netherlands"
     };
 
     const countryFlags = {
-      MY: "🇲🇾", KR: "🇰🇷", JP: "🇯🇵", CN: "🇨🇳", TW: "🇹🇼",
+      MY: "🇲🇾", KR: "🇰🇷", JP: "🇯🇵", CN: "🇨🇳", TW: "🇹🇼", HK: "🇭🇰",
       TH: "🇹🇭", PH: "🇵🇭", ID: "🇮🇩", IN: "🇮🇳", US: "🇺🇸", GB: "🇬🇧",
       FR: "🇫🇷", DE: "🇩🇪", ES: "🇪🇸", IT: "🇮🇹", TR: "🇹🇷", SA: "🇸🇦",
       BR: "🇧🇷", MX: "🇲🇽", AU: "🇦🇺", CA: "🇨🇦", RU: "🇷🇺", NL: "🇳🇱"
@@ -1184,7 +1220,7 @@
 
     const langToCountry = {
       ko: 'KR', ja: 'JP', th: 'TH', hi: 'IN', ta: 'IN', te: 'IN', tr: 'TR', ms: 'MY',
-      id: 'ID', tl: 'PH', zh: 'CN', cn: 'CN', en: 'US', es: 'ES', fr: 'FR', de: 'DE',
+      id: 'ID', tl: 'PH', zh: 'CN', cn: 'HK', en: 'US', es: 'ES', fr: 'FR', de: 'DE',
       it: 'IT', pt: 'BR', ar: 'SA', ru: 'RU', nl: 'NL'
     };
 
@@ -1252,6 +1288,7 @@
         tab: 'movie',
         sort: 'popularity.desc',
         genre: 'all',
+        year: 'all',
         page: 1
       },
       _pendingPasswordCb: null,
@@ -1343,6 +1380,7 @@
         state.countryPage.tab = params.get('tab') || 'movie';
         state.countryPage.sort = params.get('sort') || 'popularity.desc';
         state.countryPage.genre = params.get('genre') || 'all';
+        state.countryPage.year = params.get('year') || 'all';
         state.countryPage.page = parseInt(params.get('page')) || 1;
         
         switchPage('country-page', () => loadCountryPage());
@@ -1711,6 +1749,15 @@
         });
       });
       
+      const yearSelect = document.getElementById('country-year-select');
+      const thisYear = new Date().getFullYear();
+      for (let y = thisYear; y >= 1960; y--) yearSelect.add(new Option(y, y));
+      yearSelect.addEventListener('change', (e) => {
+        state.countryPage.year = e.target.value;
+        state.countryPage.page = 1;
+        updateCountryUrl();
+      });
+
       sortSelect.addEventListener('change', (e) => {
         state.countryPage.sort = e.target.value;
         state.countryPage.page = 1;
@@ -1736,12 +1783,13 @@
     }
 
     function updateCountryUrl() {
-      const { code, tab, sort, genre, page } = state.countryPage;
+      const { code, tab, sort, genre, year, page } = state.countryPage;
       const params = new URLSearchParams();
       params.append('code', code);
       if (tab !== 'movie') params.append('tab', tab);
       if (sort !== 'popularity.desc') params.append('sort', sort);
       if (genre !== 'all') params.append('genre', genre);
+      if (year !== 'all') params.append('year', year);
       if (page > 1) params.append('page', page);
       window.location.hash = `#country?${params.toString()}`;
     }
@@ -1749,7 +1797,7 @@
     async function loadCountryPage() {
       if (!state.apiKey) return;
       
-      const { code, tab, sort, genre, page } = state.countryPage;
+      const { code, tab, sort, genre, year, page } = state.countryPage;
       const grid = document.getElementById('country-grid');
       const loadMoreBtn = document.getElementById('country-load-more-btn');
       
@@ -1760,7 +1808,8 @@
       
       // Update header
       document.getElementById('country-hero-flag').textContent = code;
-      document.querySelectorAll('#country-strip .country-chip').forEach(a => a.classList.toggle('active', a.dataset.code === code));
+      document.getElementById('country-hero-emoji').textContent = countryFlags[code] || '';
+      document.getElementById('country-switch').value = code;
       document.getElementById('country-hero-name').textContent = name;
       document.getElementById('country-hero-desc').textContent = `Explore popular movies and TV series from ${name}. Stream the latest updates, top rated dramas, and filter by sub-genres.`;
       
@@ -1770,6 +1819,7 @@
         else btn.classList.remove('active');
       });
       document.getElementById('country-sort-select').value = sort;
+      document.getElementById('country-year-select').value = year;
       document.querySelectorAll('#country-genre-chips .filter-pill').forEach(chip => {
         if (chip.getAttribute('data-genre') === genre) chip.classList.add('active');
         else chip.classList.remove('active');
@@ -1807,7 +1857,14 @@
           params.with_genres = genre;
         }
 
-        const endpoint = tab === 'movie' ? '/discover/movie' : '/discover/tv';
+        const isMovie = tab === 'movie';
+        if (year !== 'all') {
+          params[isMovie ? 'primary_release_year' : 'first_air_date_year'] = year;
+        }
+        // keep unreleased titles out of "newest first"
+        params[isMovie ? 'primary_release_date.lte' : 'first_air_date.lte'] = new Date().toISOString().slice(0, 10);
+
+        const endpoint = isMovie ? '/discover/movie' : '/discover/tv';
         const res = await fetchTMDB(endpoint, params);
         
         if (!append) {
@@ -1883,6 +1940,17 @@
           fetchTMDB('/discover/movie', { sort_by: 'popularity.desc', 'vote_count.gte': 100 }).catch(() => null)
         ]);
 
+        // Newest-first rows: cap at today so unreleased placeholders don't fill them
+        const today = new Date().toISOString().slice(0, 10);
+        const latest = (params) => fetchTMDB('/discover/tv', { sort_by: 'first_air_date.desc', 'first_air_date.lte': today, ...params }).catch(() => null);
+        const [hkLatest, cantonese, cnLatest, twDrama] = await Promise.all([
+          latest({ with_origin_country: 'HK' }),
+          fetchTMDB('/discover/tv', { with_original_language: 'cn', sort_by: 'popularity.desc' }).catch(() => null),
+          latest({ with_origin_country: 'CN' }),
+          fetchTMDB('/discover/tv', { with_origin_country: 'TW', sort_by: 'popularity.desc' }).catch(() => null)
+        ]);
+        const withPoster = (res) => res ? res.results.filter(r => r.poster_path) : [];
+
         const container = document.getElementById('home-rows-container');
         container.innerHTML = ''; // Clear skeleton states
         
@@ -1898,7 +1966,11 @@
         if (malayDrama) injectCategoryRow(container, 'Malaysian Drama', malayDrama.results);
         if (thaiDrama) injectCategoryRow(container, 'Thai Drama', thaiDrama.results);
         if (japanDrama) injectCategoryRow(container, 'Japanese Drama & Anime', japanDrama.results);
+        injectCategoryRow(container, 'Latest Hong Kong Drama', withPoster(hkLatest));
+        injectCategoryRow(container, 'Cantonese Series', withPoster(cantonese));
+        injectCategoryRow(container, 'Latest Chinese Drama', withPoster(cnLatest));
         if (chinaDrama) injectCategoryRow(container, 'Chinese Drama', chinaDrama.results);
+        injectCategoryRow(container, 'Taiwanese Drama', withPoster(twDrama));
         if (indiaDrama) injectCategoryRow(container, 'Bollywood & Indian Drama', indiaDrama.results);
         if (turkeyDrama) injectCategoryRow(container, 'Turkish Drama', turkeyDrama.results);
         if (latinDrama) injectCategoryRow(container, 'Spanish & Latin Drama', latinDrama.results);
@@ -1940,11 +2012,14 @@
     function renderCountryNav() {
       const entries = Object.entries(countryNames);
       const tiles = document.getElementById('home-country-tiles');
-      const strip = document.getElementById('country-strip');
+      const picker = document.getElementById('country-switch');
       if (tiles) tiles.innerHTML = entries.map(([code, name]) =>
-        `<a class="country-tile" href="#country?code=${code}"><b>${code}</b>${name}</a>`).join('');
-      if (strip) strip.innerHTML = entries.map(([code, name]) =>
-        `<a class="country-chip" data-code="${code}" href="#country?code=${code}"><b>${code}</b>${name}</a>`).join('');
+        `<a class="country-tile" href="#country?code=${code}"><b>${code}</b><span class="country-flag" aria-hidden="true">${countryFlags[code] || ''}</span>${name}</a>`).join('');
+      if (picker) {
+        picker.innerHTML = entries.map(([code, name]) =>
+          `<option value="${code}">${countryFlags[code] || ''} ${name}</option>`).join('');
+        picker.onchange = () => { window.location.hash = `#country?code=${picker.value}`; };
+      }
     }
     renderCountryNav();
 
@@ -2475,6 +2550,8 @@
         const genresBox = document.getElementById('watch-genres');
         genresBox.innerHTML = details.genres.map(g => `<span class="genre-tag">${g.name}</span>`).join('');
         
+        loadWatchProviders(id, type);
+
         // Country / Language Badge
         const countryBadge = document.getElementById('watch-country-badge');
         if (countryBadge) {
@@ -2529,6 +2606,7 @@
         // 2Embed video loader logic
         let embedUrl = '';
         if (isTV) {
+          const isHK = Array.isArray(details.origin_country) ? details.origin_country.includes('HK') : details.origin_country === 'HK';
           const embedSeason = isHK ? 1 : season;
           embedUrl = `https://www.2embed.cc/embedtv/${id}&s=${embedSeason}&e=${episode}`;
           document.getElementById('player-status-txt').textContent = `Loading Season ${embedSeason} Episode ${episode}...`;
@@ -2642,6 +2720,35 @@
       const targetSeason = isHK ? 1 : season;
       // Navigate to watch route with updated parameters
       window.location.hash = `#watch?id=${tvId}&type=tv&s=${targetSeason}&e=${episode}`;
+    }
+
+    const PROVIDER_REGION = 'MY';
+
+    async function loadWatchProviders(id, type) {
+      const box = document.getElementById('watch-providers');
+      box.hidden = true;
+      box.innerHTML = '';
+      try {
+        const res = await fetchTMDB(`/${type}/${id}/watch/providers`);
+        const region = res && res.results && res.results[PROVIDER_REGION];
+        if (!region || state.watchData.id != id) return; // stale response after navigating away
+        const groups = [['flatrate', 'Stream'], ['free', 'Free'], ['ads', 'Free with ads'], ['rent', 'Rent'], ['buy', 'Buy']];
+        const seen = new Set();
+        const items = [];
+        for (const [key, label] of groups) {
+          for (const p of region[key] || []) {
+            if (seen.has(p.provider_id)) continue;
+            seen.add(p.provider_id);
+            items.push(`<a class="provider" href="${region.link}" target="_blank" rel="noopener" title="${p.provider_name}">
+              <img src="https://image.tmdb.org/t/p/w92${p.logo_path}" alt="" loading="lazy"><span>${p.provider_name}<small>${label}</small></span></a>`);
+          }
+        }
+        if (!items.length) return;
+        box.innerHTML = `<p class="eyebrow">Where to watch in Malaysia</p><div class="provider-list">${items.join('')}</div><p class="provider-credit">Availability data from JustWatch via TMDB</p>`;
+        box.hidden = false;
+      } catch (e) {
+        console.warn('Watch providers unavailable:', e);
+      }
     }
 
     async function loadRelatedContent(id, type) {
