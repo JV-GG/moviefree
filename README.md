@@ -85,7 +85,7 @@ Make the website look premium, modern, and cinematic — similar to Netflix or V
 
 ## ⚡ Key Features of JV Movie Redesign
 
-* **Futuristic Cyber Interface**: Geometric headings (**Righteous**), clean typography (**Poppins**), glassmorphic layout consoles, and neon gradient details (Indigo `#6366f1` to Play Green `#22c55e`).
+* **"Late Screening" Interface**: Cinema-marquee look — condensed display headings (**Big Shoulders Display**), **Inter** body text, warm near-black ground (`#0D0D0B`) and a single amber accent (`#F5B841`). Ranked "programme" list, country codes instead of flag emoji.
 * **Onboarding Ad-Blocker Alert**: Auto-popups on load recommending browser setups (such as Brave or extensions) to shield video streams from third-party ads.
 * **Dynamic API Access Lock**: Security layer (Password: `Chen@12345678`) restricting key settings, which automatically re-locks upon closing.
 * **Static SPA Structure**: Zero external build modules, single-file hash routing, and native-feeling CSS page view transitions.
